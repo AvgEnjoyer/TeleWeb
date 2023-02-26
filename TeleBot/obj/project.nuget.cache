@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "Ar0bN7l2i8FlzQxCbg868PKLxACtI1JpkuLZz5LPiy+6rgu1k+QyQUk0dneWvq7RfaV3Vpy1uXcadSHO4cmp3w==",
+  "success": true,
+  "projectFilePath": "C:\\Project\\TeleWeb\\TeleBot\\TeleBot.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\lenovo\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\lenovo\\.nuget\\packages\\telegram.bot\\19.0.0-preview.2\\telegram.bot.19.0.0-preview.2.nupkg.sha512"
+  ],
+  "logs": []
+}
