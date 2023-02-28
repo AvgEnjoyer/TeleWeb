@@ -2,94 +2,61 @@
 using TeleWeb.Domain.Models;
 using TeleWeb.Application.DTOs;
 using TeleWeb.Application.Services.Interfaces;
+using AutoMapper;
+using System.Security.Cryptography.X509Certificates;
+using TeleWeb.Data.Repositories.Interfaces;
+
 namespace TeleWeb.Application.Services
 {
     internal class UserService : IUserService
     {
-        
-        private readonly UserRepository _userRepository;
 
-        public UserService(UserRepository userRepository)
+        private readonly IUserRepository _userRepository;
+        private readonly IMapper _autoMapper;
+        
+        public UserService(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _autoMapper = mapper;
         }
 
-        public async Task<UserDto> GetUserByIdAsync(int id)
+        public async Task<UserDTO> GetByIdAsync(int id)
         {
             var user = await _userRepository.GetByIdAsync(id);
-
+            var userDTO = _autoMapper.Map<UserDTO>(user);
+            return userDTO;
+        }
+        
+        public async Task UpdateAsync(int id, UserDTO userDTO)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
             if (user == null)
             {
                 throw new ArgumentException($"User with id {id} not found");
             }
 
-            return new UserDto
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                DateOfBirth = user.DateOfBirth,
-                TelegramId = user.TelegramId,
-                Subscriptions = user.Subscriptions as ICollection<ChannelDto>};
+            _autoMapper.Map(userDTO, user);
+            await _userRepository.UpdateAsync(user);
+            await _userRepository.SaveRepoChangesAsync();
+            
         }
 
-        public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserDTO>> GetAllAsync()
         {
             var users = await _userRepository.GetAllAsync();
-
-            return users.Select(user => new UserDto
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                DateOfBirth = user.DateOfBirth,
-                TelegramId = user.TelegramId,
-                Subscriptions = user.Subscriptions as ICollection<ChannelDto>
-            });
+            return _autoMapper.ProjectTo<UserDTO>((IQueryable)users);
         }
 
-        public async Task<int> CreateUserAsync(UserDto userDto)
+        public async Task CreateAsync(UserDTO userDTO)
         {
-            var user = new User
-            {
-                Name = userDto.Name,
-                Email = userDto.Email,
-                Phone = userDto.Phone,
-                IsActive = userDto.IsActive
-            };
-
+            var user = _autoMapper.Map<User>(userDTO);
             await _userRepository.CreateAsync(user);
-
-            return user.Id;
+            await _userRepository.SaveRepoChangesAsync();
         }
 
-        public async Task UpdateUserAsync(UserDto userDto)
+        public async Task DeleteAsync(int id)
         {
-            var user = await _userRepository.GetByIdAsync(userDto.Id);
-
-            if (user == null)
-            {
-                throw new ArgumentException($"User with id {userDto.Id} not found");
-            }
-
-            user.Name = userDto.Name;
-            user.Email = userDto.Email;
-            user.Phone = userDto.Phone;
-            user.IsActive = userDto.IsActive;
-
-            await _userRepository.UpdateAsync(user);
-        }
-
-        public async Task DeleteUserByIdAsync(int id)
-        {
-            var user = await _userRepository.GetByIdAsync(id);
-
-            if (user == null)
-            {
-                throw new ArgumentException($"User with id {id} not found");
-            }
-
-            await _userRepository.DeleteAsync(user);
+            await _userRepository.DeleteAsync(id);
         }
     }
 }

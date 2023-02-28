@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeleWeb.Data", "TeleWeb.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeleWeb.Domain", "TeleWeb.Domain\TeleWeb.Domain.csproj", "{EEE0A94D-ACEC-4E4C-BCF4-FF77207B3500}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeleWeb.DI", "TeleWeb.DI\TeleWeb.DI.csproj", "{5E50C012-25FA-47DB-8774-FF0F946F7D46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeleWeb.DI", "TeleWeb.DI\TeleWeb.DI.csproj", "{5E50C012-25FA-47DB-8774-FF0F946F7D46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "9kuoFbc2jvg1SjgxvMW2H+psvBriZWrXl34rOUa0UJq43fGoeF7hIzLZ/e27YaTzPHc2loMu6CGGfS9X+URqzQ==",
+  "dgSpecHash": "zqB8ScVhifbcF0BGpktjwePu86oWvvzHDrsKm0tlsQDAv1aAy3MnyTHX+Ghyew0HsWPd/RlrxFLnYQivXyTTfg==",
   "success": true,
   "projectFilePath": "C:\\Project\\TeleWeb\\TeleWeb.Application\\TeleWeb.Application.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\lenovo\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
+    "C:\\Users\\lenovo\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\lenovo\\.nuget\\packages\\microsoft.entityframeworkcore\\8.0.0-preview.1.23111.4\\microsoft.entityframeworkcore.8.0.0-preview.1.23111.4.nupkg.sha512",
     "C:\\Users\\lenovo\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\8.0.0-preview.1.23111.4\\microsoft.entityframeworkcore.abstractions.8.0.0-preview.1.23111.4.nupkg.sha512",
     "C:\\Users\\lenovo\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\8.0.0-preview.1.23111.4\\microsoft.entityframeworkcore.analyzers.8.0.0-preview.1.23111.4.nupkg.sha512",

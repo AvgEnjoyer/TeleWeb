@@ -30,9 +30,6 @@
             "projectReferences": {
               "C:\\Project\\TeleWeb\\TeleWeb.Data\\TeleWeb.Data.csproj": {
                 "projectPath": "C:\\Project\\TeleWeb\\TeleWeb.Data\\TeleWeb.Data.csproj"
-              },
-              "C:\\Project\\TeleWeb\\TeleWeb.Domain\\TeleWeb.Domain.csproj": {
-                "projectPath": "C:\\Project\\TeleWeb\\TeleWeb.Domain\\TeleWeb.Domain.csproj"
               }
             }
           }
@@ -46,6 +43,12 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

@@ -110,7 +110,7 @@ namespace TeleBot
         private async Task ProcessChannelRegistration(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
 
-            try { var chat = await botClient.GetChatAsync(update.Message.Text, cancellationToken); 
+            try { var chat = await botClient.GetChatAsync(update!.Message!.Text!, cancellationToken); 
             if (chat == null)
             {
                 return;
@@ -118,7 +118,7 @@ namespace TeleBot
             }
             if(
                     (await botClient.GetChatAdministratorsAsync(chat.Id)).FirstOrDefault(x=>x.User.Id ==botClient.BotId) != null
-                &&  (await botClient.GetChatAdministratorsAsync(chat.Id)).FirstOrDefault(x => x.User.Id == update.Message.From.Id) != null)
+                &&  (await botClient.GetChatAdministratorsAsync(chat.Id)).FirstOrDefault(x => x.User.Id == update!.Message!.From!.Id) != null)
             {
                 await botClient.SendTextMessageAsync(chat.Id, "great");
             }

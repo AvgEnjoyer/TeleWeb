@@ -8,11 +8,12 @@ using TeleWeb.Domain.Models;
 
 namespace TeleWeb.Application.DTOs
 {
-    public class MediaFileDto
+    public class MediaFileDTO
     {
         public int Id { get; private set; }
-        public string Url { get; set; }
-        public string Type { get; set; }
-        public PostDto Post { get; set; }
+        public string Url { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        
+        public PostDTO Post { get; set; } = new();
     }
 }

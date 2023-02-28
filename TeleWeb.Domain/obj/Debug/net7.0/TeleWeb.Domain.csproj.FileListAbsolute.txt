@@ -1,0 +1,12 @@
+C:\Project\TeleWeb\TeleWeb.Domain\bin\Debug\net7.0\TeleWeb.Domain.deps.json
+C:\Project\TeleWeb\TeleWeb.Domain\bin\Debug\net7.0\TeleWeb.Domain.dll
+C:\Project\TeleWeb\TeleWeb.Domain\bin\Debug\net7.0\TeleWeb.Domain.pdb
+C:\Project\TeleWeb\TeleWeb.Domain\obj\Debug\net7.0\TeleWeb.Domain.csproj.AssemblyReference.cache
+C:\Project\TeleWeb\TeleWeb.Domain\obj\Debug\net7.0\TeleWeb.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Project\TeleWeb\TeleWeb.Domain\obj\Debug\net7.0\TeleWeb.Domain.AssemblyInfoInputs.cache
+C:\Project\TeleWeb\TeleWeb.Domain\obj\Debug\net7.0\TeleWeb.Domain.AssemblyInfo.cs
+C:\Project\TeleWeb\TeleWeb.Domain\obj\Debug\net7.0\TeleWeb.Domain.csproj.CoreCompileInputs.cache
+C:\Project\TeleWeb\TeleWeb.Domain\obj\Debug\net7.0\TeleWeb.Domain.dll
+C:\Project\TeleWeb\TeleWeb.Domain\obj\Debug\net7.0\refint\TeleWeb.Domain.dll
+C:\Project\TeleWeb\TeleWeb.Domain\obj\Debug\net7.0\TeleWeb.Domain.pdb
+C:\Project\TeleWeb\TeleWeb.Domain\obj\Debug\net7.0\ref\TeleWeb.Domain.dll

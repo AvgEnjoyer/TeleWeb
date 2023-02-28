@@ -4,7 +4,7 @@ using TeleWeb.Data.Repositories.Interfaces;
 
 namespace TeleWeb.Data.Repositories
 {
-    public class UserRepository : IRepository
+    public class UserRepository : IUserRepository
     {
         private readonly TeleWebDbContext _dbContext;
         public UserRepository(TeleWebDbContext dbContext)
@@ -17,7 +17,7 @@ namespace TeleWeb.Data.Repositories
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
             {
-                throw new ArgumentException($"User with id {id} not found");
+                throw new ArgumentException($"User with id {id} not found in DBcotext");
             }
             return user;
         }
@@ -26,35 +26,37 @@ namespace TeleWeb.Data.Repositories
             return await _dbContext.Users.ToListAsync();
         }
 
-        public async Task AddAsync(User user)
+        public async Task CreateAsync(User user)
         {
             await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(User user)
+        public async Task UpdateAsync(User userWithNewInfo)
         {
-            _dbContext.Users.Update(user);
-            await _dbContext.SaveChangesAsync();
-        }
-        public async Task DeleteAsync(User user)
-        {
-            var userToDelete = await _dbContext.Users.FindAsync(user);
-            if (userToDelete == null)
+            var userToUpdate = await _dbContext.Users.FindAsync(userWithNewInfo);
+            if (userToUpdate == null)
             {
-                throw new ArgumentException($"User with id {user.Id} not found and cant be deleted");
+                throw new ArgumentException($"User with id {userWithNewInfo.Id} not found in DBcontext");
             }
-            _dbContext.Users.Remove(userToDelete);
+            _dbContext.Users.Update(userToUpdate);
             await _dbContext.SaveChangesAsync();
         }
+
         public async Task DeleteAsync(int id)
         {
             var userToDelete = await _dbContext.Users.FindAsync(id);
             if (userToDelete == null)
             {
-                throw new ArgumentException($"User with id {id} not found and cant be deleted");
+                throw new ArgumentException($"User with id {id} not found in DBcontext and cant be deleted");
             }
             _dbContext.Users.Remove(userToDelete);
+            await _dbContext.SaveChangesAsync();
+        }
+
+
+        public async Task SaveRepoChangesAsync()
+        {
             await _dbContext.SaveChangesAsync();
         }
 

@@ -1,13 +1,14 @@
-﻿using TeleWeb.Domain.Models;
+﻿using Microsoft.VisualBasic;
+using TeleWeb.Domain.Models;
 
 namespace TeleWeb.Data.Repositories.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository : IRepository
     {
         Task<User> GetByIdAsync(int id);
-        Task<IEnumerable<User>> GetAllAsync();
-        Task<User> AddAsync(User user);
+        Task<ICollection<User>> GetAllAsync();
+        Task CreateAsync(User user);
         Task UpdateAsync(User user);
-        Task DeleteAsync(User user);
+        Task DeleteAsync(int id);
     }
 }

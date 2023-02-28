@@ -8,16 +8,13 @@ using TeleWeb.Domain.Models;
 
 namespace TeleWeb.Application.DTOs
 {
-    public class PostDto
+    public class PostDTO
     {
-        public int Id { get; private set; }
+        public int Id { get; set; }
         public string? Text { get; set; }
         public DateTime Date { get; set; }
         
-        public Channel Channel { get; set; } = new();
-        public Admin AdminWhoPosted { get; set; } = new();
-
-        public ICollection<MediaFile>? MediaFiles { get; set; }
-
+        public ChannelDTO Channel { get; set; } = new();
+        public AdminDTO AdminWhoPosted { get; set; } = new();
     }
 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -8,11 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.5.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0-preview.1.23110.8" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TeleWeb.Application\TeleWeb.Application.csproj" />
-    <ProjectReference Include="..\TeleWeb.Data\TeleWeb.Data.csproj" />
   </ItemGroup>
 
 </Project>

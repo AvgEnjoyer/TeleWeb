@@ -10,3 +10,15 @@ C:\Project\TeleBot\obj\Debug\net7.0\TeleBot.dll
 C:\Project\TeleBot\obj\Debug\net7.0\refint\TeleBot.dll
 C:\Project\TeleBot\obj\Debug\net7.0\TeleBot.pdb
 C:\Project\TeleBot\obj\Debug\net7.0\ref\TeleBot.dll
+C:\Project\TeleWeb\TeleBot\bin\Debug\net7.0\TeleBot.deps.json
+C:\Project\TeleWeb\TeleBot\bin\Debug\net7.0\TeleBot.dll
+C:\Project\TeleWeb\TeleBot\bin\Debug\net7.0\TeleBot.pdb
+C:\Project\TeleWeb\TeleBot\obj\Debug\net7.0\TeleBot.csproj.AssemblyReference.cache
+C:\Project\TeleWeb\TeleBot\obj\Debug\net7.0\TeleBot.GeneratedMSBuildEditorConfig.editorconfig
+C:\Project\TeleWeb\TeleBot\obj\Debug\net7.0\TeleBot.AssemblyInfoInputs.cache
+C:\Project\TeleWeb\TeleBot\obj\Debug\net7.0\TeleBot.AssemblyInfo.cs
+C:\Project\TeleWeb\TeleBot\obj\Debug\net7.0\TeleBot.csproj.CoreCompileInputs.cache
+C:\Project\TeleWeb\TeleBot\obj\Debug\net7.0\TeleBot.dll
+C:\Project\TeleWeb\TeleBot\obj\Debug\net7.0\refint\TeleBot.dll
+C:\Project\TeleWeb\TeleBot\obj\Debug\net7.0\TeleBot.pdb
+C:\Project\TeleWeb\TeleBot\obj\Debug\net7.0\ref\TeleBot.dll

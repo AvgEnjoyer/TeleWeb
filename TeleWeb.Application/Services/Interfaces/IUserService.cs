@@ -1,11 +1,12 @@
-﻿namespace TeleWeb.Application.Services.Interfaces
+﻿using TeleWeb.Application.DTOs;
+namespace TeleWeb.Application.Services.Interfaces
 {
-    public interface IUserService
+    public interface IUserService : IService
     {
-        Task<UserDto> GetByIdAsync(int id);
-        Task<IEnumerable<UserDto>> GetAllAsync();
-        Task<UserDto> CreateAsync(CreateUserDto createUserDto);
-        Task UpdateAsync(int id, UpdateUserDto updateUserDto);
-        Task DeleteAsync(int id);
+        public Task<UserDTO> GetByIdAsync(int id);
+        public Task UpdateAsync(int id, UserDTO user);
+        public Task<IEnumerable<UserDTO>> GetAllAsync();
+        public Task CreateAsync(UserDTO userDTO);
+        public Task DeleteAsync(int id);
     }
 }

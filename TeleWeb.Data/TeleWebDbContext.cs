@@ -10,6 +10,17 @@ namespace TeleWeb.Data
         public DbSet<Channel> Channels { get; set; }
         public DbSet<MediaFile> MediaFiles { get; set; }
 
+        public TeleWebDbContext(DbContextOptions<TeleWebDbContext> options) : base(options)
+        {
+        }
+        
+        //override protected void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    if(!optionsBuilder.IsConfigured)
+        //    {
+        //        optionsBuilder.UseSqlServer("DefaultConnection");
+        //    }
+        //}
         /// <summary>
         /// Schema
         /// </summary>
@@ -19,7 +30,7 @@ namespace TeleWeb.Data
 
             //User
             modelBuilder.Entity<User>()
-                .HasMany(u => u.Subcriptions)
+                .HasMany(u => u.Subscriptions)
                 .WithMany(c => c.Subscribers)
                 .UsingEntity<Dictionary<string, object>>(
                   "UserChannelSubscription",

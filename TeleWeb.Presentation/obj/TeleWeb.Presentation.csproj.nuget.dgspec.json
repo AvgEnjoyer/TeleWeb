@@ -30,9 +30,6 @@
             "projectReferences": {
               "C:\\Project\\TeleWeb\\TeleWeb.Data\\TeleWeb.Data.csproj": {
                 "projectPath": "C:\\Project\\TeleWeb\\TeleWeb.Data\\TeleWeb.Data.csproj"
-              },
-              "C:\\Project\\TeleWeb\\TeleWeb.Domain\\TeleWeb.Domain.csproj": {
-                "projectPath": "C:\\Project\\TeleWeb\\TeleWeb.Domain\\TeleWeb.Domain.csproj"
               }
             }
           }
@@ -46,6 +43,12 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -157,9 +160,6 @@
             "projectReferences": {
               "C:\\Project\\TeleWeb\\TeleWeb.Application\\TeleWeb.Application.csproj": {
                 "projectPath": "C:\\Project\\TeleWeb\\TeleWeb.Application\\TeleWeb.Application.csproj"
-              },
-              "C:\\Project\\TeleWeb\\TeleWeb.Data\\TeleWeb.Data.csproj": {
-                "projectPath": "C:\\Project\\TeleWeb\\TeleWeb.Data\\TeleWeb.Data.csproj"
               }
             }
           }
@@ -177,6 +177,10 @@
             "Autofac": {
               "target": "Package",
               "version": "[6.5.0, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[8.0.0-preview.1.23110.8, )"
             }
           },
           "imports": [
@@ -297,6 +301,10 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
             "Autofac.Extensions.DependencyInjection": {
               "target": "Package",
               "version": "[8.0.0, )"

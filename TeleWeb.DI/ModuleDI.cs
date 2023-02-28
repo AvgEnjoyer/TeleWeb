@@ -1,18 +1,38 @@
 ﻿using Autofac;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using TeleWeb.Data;
 namespace TeleWeb.DI
 {
     public class ModuleDI : Module
     {
+        private IConfiguration _configuration;
+
+        public ModuleDI(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         protected override void Load(ContainerBuilder builder)
         {
-            base.Load(builder);
-            RegisterServices(builder);
+            RegisterDBContext(builder);
             RegisterRepositories(builder);
+            RegisterServices(builder);
+        }
+
+        private void RegisterDBContext(ContainerBuilder builder)
+        {
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            builder.RegisterType<TeleWebDbContext>()
+                .WithParameter(new TypedParameter(typeof(DbContextOptions<DbContext>), connectionString))
+                 .InstancePerLifetimeScope()
+                 .OnActivated(x => x.Instance.Database.mig);
         }
 
         private void RegisterServices(ContainerBuilder builder)
         {
-            var servicesAssembly = typeof(TeleWeb.Application.Services.ServiceRunner).Assembly;
+            var servicesAssembly = typeof(TeleWeb.Application.Services.Interfaces.IService).Assembly;
             builder.RegisterAssemblyTypes(servicesAssembly).
                 Where(t => t.GetInterfaces()
                 .Contains(typeof(TeleWeb.Application.Services.Interfaces.IService)))
@@ -22,8 +42,8 @@ namespace TeleWeb.DI
 
         private void RegisterRepositories(ContainerBuilder builder)
         {
-            var servicesAssembly = typeof(TeleWeb.Data.Repositories.Interfaces.IRepository).Assembly;
-            builder.RegisterAssemblyTypes(servicesAssembly).
+            var repositoriesAssembly = typeof(TeleWeb.Data.Repositories.Interfaces.IRepository).Assembly;
+            builder.RegisterAssemblyTypes(repositoriesAssembly).
                 Where(t => t.GetInterfaces()
                 .Contains(typeof(TeleWeb.Data.Repositories.Interfaces.IRepository)))
                 .AsImplementedInterfaces()
