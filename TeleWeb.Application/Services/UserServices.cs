@@ -1,16 +1,15 @@
-﻿using TeleWeb.Data.Repositories;
-using TeleWeb.Domain.Models;
+﻿using TeleWeb.Domain.Models;
 using TeleWeb.Application.DTOs;
 using TeleWeb.Application.Services.Interfaces;
 using AutoMapper;
-using System.Security.Cryptography.X509Certificates;
 using TeleWeb.Data.Repositories.Interfaces;
+
 
 namespace TeleWeb.Application.Services
 {
     internal class UserService : IUserService
     {
-
+       
         private readonly IUserRepository _userRepository;
         private readonly IMapper _autoMapper;
         
@@ -36,7 +35,7 @@ namespace TeleWeb.Application.Services
             }
 
             _autoMapper.Map(userDTO, user);
-            await _userRepository.UpdateAsync(user);
+            //await _userRepository.UpdateAsync(user);
             await _userRepository.SaveRepoChangesAsync();
             
         }
@@ -44,9 +43,9 @@ namespace TeleWeb.Application.Services
         public async Task<IEnumerable<UserDTO>> GetAllAsync()
         {
             var users = await _userRepository.GetAllAsync();
-            return _autoMapper.ProjectTo<UserDTO>((IQueryable)users);
+            return _autoMapper.Map<ICollection<UserDTO>>(users);
         }
-
+        
         public async Task CreateAsync(UserDTO userDTO)
         {
             var user = _autoMapper.Map<User>(userDTO);
@@ -58,5 +57,6 @@ namespace TeleWeb.Application.Services
         {
             await _userRepository.DeleteAsync(id);
         }
+        
     }
 }

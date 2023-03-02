@@ -2,6 +2,13 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using TeleWeb.DI;
 using TeleWeb.Presentation.AppStartExtensions;
+using Microsoft.EntityFrameworkCore.Design;
+using TeleWeb.Domain.Models;
+using TeleWeb.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -14,6 +21,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCustomAutoMapper();
+
+builder.Services.AddDbContext<IdentityContext>(option => option.UseSqlServer(
+    builder.Configuration.GetConnectionString("IdentityConnection")
+    ));
+
+builder.Services.AddIdentity<UserIdentity, IdentityRole>()
+    .AddEntityFrameworkStores<IdentityContext>()
+    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 
@@ -46,9 +61,11 @@ app.UseStaticFiles(new StaticFileOptions
     }
 });
 
+app.UseAuthentication();    
 app.UseRouting();
 
 app.UseAuthorization();
+
 
 app.MapControllers();
 

@@ -11,9 +11,9 @@ namespace TeleWeb.Application.DTOs
     {
         public int Id { get; private set; }
         public string Name { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string PasswordHash { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
         public DateTime DateOfBirth { get; set; }
-        public string? TelegramId { get; set; }
+        public string? PhoneNumber { get; set; }
+        //public string? TelegramId { get; set; }
     }
 }

@@ -12,6 +12,7 @@ namespace TeleWeb.Data
 
         public TeleWebDbContext(DbContextOptions<TeleWebDbContext> options) : base(options)
         {
+           // Database.EnsureCreated();
         }
         
         //override protected void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -37,11 +38,11 @@ namespace TeleWeb.Data
                 j => j
                 .HasOne<Channel>()
                 .WithMany()
-                .HasForeignKey("ChannelId").OnDelete(DeleteBehavior.Cascade),
+                .HasForeignKey("ChannelId").OnDelete(DeleteBehavior.NoAction),
                 j => j
                 .HasOne<User>()
                 .WithMany()
-                .HasForeignKey("UserId").OnDelete(DeleteBehavior.Cascade),
+                .HasForeignKey("UserId").OnDelete(DeleteBehavior.NoAction),
                 j => j
                 .HasKey("UserId", "ChannelId"));
           
@@ -49,12 +50,12 @@ namespace TeleWeb.Data
             modelBuilder.Entity<Admin>()
                 .HasMany(u => u.Posts)
                 .WithOne(p => p.AdminWhoPosted)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
             
             modelBuilder.Entity<Admin>()
                 .HasMany(a=>a.OwnedChannels)
                 .WithOne(p => p.PrimaryAdmin)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
            
             //Channel
             modelBuilder.Entity<Channel>()
@@ -70,13 +71,14 @@ namespace TeleWeb.Data
                 j => j
                 .HasOne<Admin>()
                 .WithMany()
-                .HasForeignKey("AdminId").OnDelete(DeleteBehavior.Cascade),
+                .HasForeignKey("AdminId").OnDelete(DeleteBehavior.NoAction),
                 j => j
                 .HasOne<Channel>()
                 .WithMany()
-                .HasForeignKey("ChannelId").OnDelete(DeleteBehavior.Cascade),
+                .HasForeignKey("ChannelId").OnDelete(DeleteBehavior.NoAction)
+                ,
                 j => j
-                .HasKey("UserId", "ChannelId"));
+                .HasKey("AdminId", "ChannelId"));
            
             //TG Channel
             modelBuilder.Entity<TelegramChannel>()
@@ -85,7 +87,8 @@ namespace TeleWeb.Data
             //Posts
             modelBuilder.Entity<Post>()
                 .HasMany(p => p.MediaFiles)
-                .WithOne(m => m.Post);
+                .WithOne(m => m.Post)
+                .OnDelete(DeleteBehavior.Cascade);
 
             //IDs:
             modelBuilder.Entity<User>().Property(u => u.Id).ValueGeneratedOnAdd();

@@ -1,4 +1,5 @@
-﻿using TeleWeb.Application.DTOs;
+﻿using Microsoft.AspNetCore.Identity;
+using TeleWeb.Application.DTOs;
 namespace TeleWeb.Application.Services.Interfaces
 {
     public interface IUserService : IService
@@ -8,5 +9,7 @@ namespace TeleWeb.Application.Services.Interfaces
         public Task<IEnumerable<UserDTO>> GetAllAsync();
         public Task CreateAsync(UserDTO userDTO);
         public Task DeleteAsync(int id);
+        
+        
     }
 }

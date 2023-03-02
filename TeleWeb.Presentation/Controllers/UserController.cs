@@ -2,6 +2,13 @@
 using TeleWeb.Application.Services.Interfaces;
 using TeleWeb.Domain.Models;
 using TeleWeb.Application.DTOs;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
+using static System.Net.Mime.MediaTypeNames;
+using System.Diagnostics.Metrics;
+using System.Security.Policy;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace TeleWeb.Presentation.Controllers
 {
@@ -17,12 +24,12 @@ namespace TeleWeb.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetAllUsers()
         {
             try
             {
-                await _userService.GetAllAsync();
-                return Ok();
+                var userDTOs=await _userService.GetAllAsync();
+                return Ok(userDTOs);
             }
             catch (ArgumentException ex)
             {
@@ -35,7 +42,7 @@ namespace TeleWeb.Presentation.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUserById(int id)
+        public async Task<ActionResult<UserDTO>> GetUserById(int id)
         {
             try
             {
@@ -106,5 +113,28 @@ namespace TeleWeb.Presentation.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [Authorize(policy: "AuthorizedUser")]
+        [HttpGet("me")]
+        public async Task<ActionResult<UserDTO>> GetMeAsync()
+        {
+            try
+            {
+                // Get the current user's ID
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                // Use the ID to retrieve the user from the database
+                var userDTO = await _userService.GetByIdAsync(Convert.ToInt32(userId));
+                return Ok(userDTO);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
     }
-}
+    }

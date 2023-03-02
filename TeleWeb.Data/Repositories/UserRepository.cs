@@ -34,7 +34,7 @@ namespace TeleWeb.Data.Repositories
 
         public async Task UpdateAsync(User userWithNewInfo)
         {
-            var userToUpdate = await _dbContext.Users.FindAsync(userWithNewInfo);
+            var userToUpdate = await _dbContext.Users.FindAsync(userWithNewInfo.Id);
             if (userToUpdate == null)
             {
                 throw new ArgumentException($"User with id {userWithNewInfo.Id} not found in DBcontext");
