@@ -7,12 +7,21 @@ using TeleWeb.Domain.Models;
 using TeleWeb.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder => containerBuilder.RegisterModule(new ModuleDI(builder.Configuration)));
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+        options.SlidingExpiration = true;
+    });
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -29,6 +38,7 @@ builder.Services.AddDbContext<IdentityContext>(option => option.UseSqlServer(
 builder.Services.AddIdentity<UserIdentity, IdentityRole>()
     .AddEntityFrameworkStores<IdentityContext>()
     .AddDefaultTokenProviders();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -39,7 +49,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
+app.UseAuthentication();
 app.UseHttpsRedirection();
 
 
@@ -61,7 +71,7 @@ app.UseStaticFiles(new StaticFileOptions
     }
 });
 
-app.UseAuthentication();    
+
 app.UseRouting();
 
 app.UseAuthorization();

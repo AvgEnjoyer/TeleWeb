@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TeleWeb.Application.DTOs;
 using TeleWeb.Application.Services.Interfaces;
-using TeleWeb.Domain.Models;
 
 namespace TeleWeb.Presentation.Controllers
 {
@@ -41,18 +40,19 @@ namespace TeleWeb.Presentation.Controllers
 
             return Ok();
         }
-
+        
         [HttpPost("login")]
         public async Task<IActionResult> Login(AccountLoginDTO model)
         {
-            var token = await _accountService.LoginUserAsync(model);
-
-            if (token != null)
+            
+            if (HttpContext.User.Identities.Any(i=>i.HasClaim(c=>c.Value=="AuthorizedUser"))) //.IsInRole("AuthorizedUser"))
             {
-                return Ok(new { Token = token });
+                return BadRequest("You are already logged in");
             }
 
-            return BadRequest("Invalid credentials");
+            return await _accountService.LoginUserAsync(model) 
+                ? Ok() 
+                : BadRequest("Invalid credentials");
         }
         [HttpPost("logout")]
         public async Task<IActionResult> SignOut(string? returnUrl = null)

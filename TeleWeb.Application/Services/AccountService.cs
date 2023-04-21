@@ -8,6 +8,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace TeleWeb.Application.Services
 {
@@ -16,14 +19,17 @@ namespace TeleWeb.Application.Services
         private readonly UserManager<UserIdentity> _userManager;
         private readonly SignInManager<UserIdentity> _signInManager;
         private readonly IConfiguration _configuration;
-       
+
+        private readonly IHttpContextAccessor _httpContextAccessor;
         
-        public AccountService(SignInManager<UserIdentity> signInManager, UserManager<UserIdentity> userManager, IConfiguration configuration)
+        public AccountService(SignInManager<UserIdentity> signInManager, UserManager<UserIdentity> userManager,
+            IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
 
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         
@@ -34,27 +40,49 @@ namespace TeleWeb.Application.Services
 
             return result;
         }
-        public async Task<string?> LoginUserAsync(AccountLoginDTO model)
+        
+        public async Task<bool> LoginUserAsync(AccountLoginDTO model)
         {
+            
             var user = await _userManager.FindByEmailAsync(model.UserNameOrEmail) ?? await _userManager.FindByNameAsync(model.UserNameOrEmail);
 
             if (user != null)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.UserNameOrEmail, model.Password, true, false);
+                var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, true, false);
 
                 if (result.Succeeded)
                 {
-                    var token = GenerateJwtToken(user);
-                    return token;
+                    //var token = GenerateJwtToken(user);
+                    //return token;
+                    await GenerateCookieAsync(user);
+                    return true;
                 }
             }
-            return null;
+            return false;
+        }
+
+        private async Task GenerateCookieAsync(UserIdentity user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Role, "AuthorizedUser")};
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = true
+            };
+
+            await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+            string cookieValue = _httpContextAccessor.HttpContext.Request.Cookies[".AspNetCore.Cookies"];
+            return;
         }
 
         private string GenerateJwtToken(UserIdentity user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:SecretKey"] ?? "");
+            var key = Encoding.ASCII.GetBytes(_configuration["JWT:SecretKey"] ?? "");
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
