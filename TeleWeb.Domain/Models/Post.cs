@@ -10,11 +10,16 @@ namespace TeleWeb.Domain.Models
         [Required]
         public DateTime Date { get; set; }
 
+        public int likes { get; set; }
+        public int dislikes { get; set; }
+
         [Required]
         public Channel Channel { get; set; } = new ();
         [Required]
         public Admin AdminWhoPosted { get; set; } = new ();
         
         public ICollection<MediaFile>? MediaFiles { get; set; }
+
+        public ICollection<Post>? Comments{ get; set; }
     }
 }

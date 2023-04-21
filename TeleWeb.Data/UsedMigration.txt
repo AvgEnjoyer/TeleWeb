@@ -1,7 +1,6 @@
 ﻿﻿Add migration: 
-    dotnet ef migrations add Initial --project TeleWeb.Data --startup-project TeleWeb.Presentation
-    
+    dotnet ef migrations add ПОРЯДОК --project TeleWeb.Data --startup-project TeleWeb.Presentation --context TeleWebDbContext
 Update database:
-    dotnet ef database update --project TeleWeb.Data --startup-project TeleWeb.Presentation
+    dotnet ef database update --project TeleWeb.Data --startup-project TeleWeb.Presentation --context TeleWebDbContext
 Remove:
     dotnet ef migrations remove --project TeleWeb.Data --startup-project TeleWeb.Presentation

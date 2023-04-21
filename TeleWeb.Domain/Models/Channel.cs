@@ -8,6 +8,7 @@ namespace TeleWeb.Domain.Models
         [Required]
         public string Name { get; set; } = String.Empty;
         public string? Description { get; set; }
+        public int? SubscribersCount { get; set; }
 
         [Required]
         public Admin PrimaryAdmin { get; set; } = new();

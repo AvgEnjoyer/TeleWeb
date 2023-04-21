@@ -8,6 +8,7 @@ using TeleWeb.Application.Services.Interfaces;
 using TeleWeb.Application.Services;
 using TeleWeb.Data;
 using TeleWeb.Domain.Models;
+using TeleWeb.Tests;
 
 
 namespace TeleWeb.DI
@@ -28,8 +29,10 @@ namespace TeleWeb.DI
             RegisterRepositories(builder);
             RegisterServices(builder);
             RegisterConfiguration(builder);
-            RegisterIdentity(builder);
+            RegisterIdentity(builder);            
         }
+
+       
 
         private void RegisterIdentity(ContainerBuilder builder)
         {

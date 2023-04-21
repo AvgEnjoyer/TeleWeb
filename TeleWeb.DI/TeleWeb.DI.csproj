@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TeleWeb.Application\TeleWeb.Application.csproj" />
+    <ProjectReference Include="..\TeleWeb.Tests\TeleWeb.Tests.csproj" />
   </ItemGroup>
 
 </Project>

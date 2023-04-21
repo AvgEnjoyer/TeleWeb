@@ -9,6 +9,10 @@ namespace TeleWeb.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<Channel> Channels { get; set; }
         public DbSet<MediaFile> MediaFiles { get; set; }
+        public TeleWebDbContext() : base()
+        {
+           
+        }
 
         public TeleWebDbContext(DbContextOptions<TeleWebDbContext> options) : base(options)
         {
