@@ -4,9 +4,9 @@ using TeleWeb.Domain.Models;
 
 namespace TeleWeb.Presentation.AppStartExtensions
 {
-    internal class MappingProfile : Profile
+    public class MappingProfile : Profile
     {
-        internal MappingProfile()
+        public MappingProfile()
         {
             // UserDTO to User
             CreateMap<UserDTO, User>()

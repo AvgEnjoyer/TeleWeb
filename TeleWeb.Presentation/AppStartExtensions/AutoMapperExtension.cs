@@ -10,7 +10,7 @@ namespace TeleWeb.Presentation.AppStartExtensions
                 mc.AddProfile(new MappingProfile());
             });
 
-            IMapper mapper = mappingConfig.CreateMapper();
+            var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
         }
     }

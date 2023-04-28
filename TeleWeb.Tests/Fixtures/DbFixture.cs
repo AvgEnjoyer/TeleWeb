@@ -1,20 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TeleWeb.Data;
 
-
-namespace TeleWeb.Tests
+namespace TeleWeb.Tests.Fixtures
 {
-    public class DBFixture : IDisposable
+    public class DbFixture : IDisposable
     {
         private readonly List<TeleWebDbContext> _contexts = new List<TeleWebDbContext>();
 
-        public DBFixture()
+        public DbFixture()
         {
         }
 

@@ -1,17 +1,19 @@
 ﻿using TeleWeb.Data;
 using TeleWeb.Data.Repositories;
 using TeleWeb.Domain.Models;
-using TeleWeb.Tests;
+using TeleWeb.Tests.Fixtures;
 
-public class RepositoryBaseTests : IClassFixture<DBFixture>
+namespace TeleWeb.Tests;
+
+public class RepositoryBaseTests : IClassFixture<DbFixture>
 {
-    private readonly DBFixture _dbFixture;
+    private readonly DbFixture _dbFixture;
 
-    public RepositoryBaseTests(DBFixture dbFixture)
+    public RepositoryBaseTests(DbFixture dbFixture)
     {
         _dbFixture = dbFixture;
     }
-    public class RepositoryBaseChannel: RepositoryBase<Channel>
+    private class RepositoryBaseChannel: RepositoryBase<Channel>
     {
         public RepositoryBaseChannel(TeleWebDbContext dbContext) : base(dbContext)
         {
@@ -24,14 +26,14 @@ public class RepositoryBaseTests : IClassFixture<DBFixture>
         using (var dbContext = _dbFixture.CreateDbContext())
         {
             var repositoryBase = new RepositoryBaseChannel(dbContext);
-            var entity = new Channel { Name = "Adawd" };
+            var entity = new Channel { Name = "Something" };
 
             // Act
             await repositoryBase.CreateAsync(entity); // Invoke the base RepositoryBase method being tested
 
             // Assert
             Assert.Contains(entity, dbContext.Set<Channel>().Local); // Verify that the entity is added to the in-memory database
-            var entity2 = new Channel { Name = "Adawd" };
+            var entity2 = new Channel { Name = "Something" };
             Assert.DoesNotContain(entity2, dbContext.Set<Channel>().Local); // Verify that the entity is not added to the in-memory database
         }
     }
@@ -168,6 +170,18 @@ public class RepositoryBaseTests : IClassFixture<DBFixture>
             {
                 Assert.Equal(expectedEntities[i].Name, actualEntities[i].Name);
             }
+        }
+    }
+    [Fact]
+    public async Task CreateAsync_Should_Throw_Exception_If_Entity_Is_Null()
+    {
+        // Arrange
+        using (var dbContext = _dbFixture.CreateDbContext())
+        {
+            var repositoryBase = new RepositoryBaseChannel(dbContext);
+
+            // Act and Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => repositoryBase.CreateAsync(null!));
         }
     }
 }

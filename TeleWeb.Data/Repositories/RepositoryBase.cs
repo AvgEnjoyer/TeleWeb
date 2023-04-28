@@ -64,5 +64,10 @@ namespace TeleWeb.Data.Repositories
             _dbContext.Set<T>().Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task SaveRepoChangesAsync()
+        {
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

@@ -1,21 +1,17 @@
 ﻿using Autofac;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using TeleWeb.Application.Services.Interfaces;
 using TeleWeb.Application.Services;
 using TeleWeb.Data;
-using TeleWeb.Domain.Models;
-using TeleWeb.Tests;
 
 
 namespace TeleWeb.DI
 {
     public class ModuleDI : Module
     {
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
         public ModuleDI(IConfiguration configuration)
         {

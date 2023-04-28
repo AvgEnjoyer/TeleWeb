@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TeleWeb.Data.Repositories.Interfaces
 {
-    public interface IRepositoryBase<T>
+    public interface IRepositoryBase<T> :IRepository
     {
         IQueryable<T> FindAll(bool trackChanges);
         IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges);

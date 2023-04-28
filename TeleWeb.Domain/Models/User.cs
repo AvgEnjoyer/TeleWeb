@@ -7,7 +7,7 @@ namespace TeleWeb.Domain.Models
     public class User 
     {
         [Key]
-        public int Id { get; private set; }
+        public int Id { get;  set; }
         [Required]
         public string Name { get; set; } = string.Empty;
         [Required]

@@ -9,7 +9,6 @@ namespace TeleWeb.Application.Services.Interfaces
         public Task<IEnumerable<UserDTO>> GetAllAsync();
         public Task CreateAsync(UserDTO userDTO);
         public Task DeleteAsync(int id);
-        
-        
+
     }
 }

@@ -2,7 +2,7 @@
 
 namespace TeleWeb.Data.Repositories.Interfaces
 {
-    interface IChannelRepository: IRepositoryBase<Channel> 
+    public interface IChannelRepository: IRepositoryBase<Channel> 
     {
     }
 }
