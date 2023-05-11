@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using TeleWeb.Application.DTOs;
+﻿using TeleWeb.Application.DTOs;
 namespace TeleWeb.Application.Services.Interfaces
 {
     public interface IUserService : IService

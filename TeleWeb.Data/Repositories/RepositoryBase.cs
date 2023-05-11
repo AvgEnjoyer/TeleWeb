@@ -14,7 +14,7 @@ namespace TeleWeb.Data.Repositories
     {
         private readonly TeleWebDbContext _dbContext;
 
-        public RepositoryBase(TeleWebDbContext dbContext)
+        protected RepositoryBase(TeleWebDbContext dbContext)
         {
             _dbContext = dbContext;
         }

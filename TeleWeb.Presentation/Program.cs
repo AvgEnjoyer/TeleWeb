@@ -1,5 +1,6 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using FluentValidation;
 using TeleWeb.DI;
 using TeleWeb.Presentation.AppStartExtensions;
 using Microsoft.EntityFrameworkCore.Design;
@@ -8,6 +9,9 @@ using TeleWeb.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using FluentValidation.AspNetCore;
+using TeleWeb.Application.DTOs;
+using TeleWeb.Validation;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +44,14 @@ builder.Services.AddIdentity<UserIdentity, IdentityRole>()
     .AddEntityFrameworkStores<IdentityContext>()
     .AddDefaultTokenProviders();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
+builder.Services.AddCors(co=>
+{
+    co.AddPolicy("Policy", builder =>
+    {
+        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -50,6 +62,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("Policy");
 app.UseAuthentication();
 app.UseHttpsRedirection();
 

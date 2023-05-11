@@ -2,10 +2,10 @@
 
 namespace TeleWeb.Application.Services.Interfaces
 {
-    public interface IChannelService
+    public interface IChannelService : IService
     {
-        public Task<IEnumerable<UserDTO>> GetAllAsync();
-        public Task<UserDTO> GetByIdAsync(int id);
+        public Task<IEnumerable<ChannelDTO>> GetAllAsync();
+        public Task<ChannelDTO> GetByIdAsync(int id);
         public Task CreateAsync(ChannelDTO channelDTO);
         public Task UpdateAsync(int id, ChannelDTO channelDTO);
         public Task DeleteAsync(int id);

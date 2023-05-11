@@ -4,7 +4,7 @@ namespace TeleWeb.Domain.Models
     public class Channel
     {
         [Key]
-        public int Id { get; private set; }
+        public int Id { get;  init; }
         [Required]
         public string Name { get; set; } = String.Empty;
         public string? Description { get; set; }
@@ -17,5 +17,6 @@ namespace TeleWeb.Domain.Models
         public ICollection<Post>? Posts { get; set; }
         [Required]
         public ICollection<Admin> Admins { get; set; } = new List<Admin>();
+        
     }
 }

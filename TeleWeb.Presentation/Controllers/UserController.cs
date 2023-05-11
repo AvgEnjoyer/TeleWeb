@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TeleWeb.Application.Services.Interfaces;
-using TeleWeb.Domain.Models;
 using TeleWeb.Application.DTOs;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity;
-using static System.Net.Mime.MediaTypeNames;
-using System.Security.Policy;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 

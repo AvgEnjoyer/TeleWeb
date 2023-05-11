@@ -2,6 +2,7 @@ using AutoMapper;
 using TeleWeb.Application.DTOs;
 using TeleWeb.Domain.Models;
 using TeleWeb.Tests.Fixtures;
+using Xunit.Abstractions;
 
 
 namespace TeleWeb.Tests;
@@ -11,19 +12,16 @@ namespace TeleWeb.Tests;
 public class MappingProfileTests : IClassFixture<MappingProfileTestsFixture>
 {
     private readonly IMapper _mapper;
-    
-    /*public MappingProfileTests()
-    {
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<MappingProfile>();
-        });
+    private MappingProfileTestsFixture _fixture;
+    private readonly ITestOutputHelper _testOutputHelper;
 
-        _mapper = config.CreateMapper();
-    }*/
-    public MappingProfileTests(MappingProfileTestsFixture fixture)
+    public MappingProfileTests(MappingProfileTestsFixture fixture, ITestOutputHelper testOutputHelper)
     {
         _mapper = fixture.Mapper;
+        _fixture = fixture;
+        _testOutputHelper = testOutputHelper;
+        _testOutputHelper.WriteLine($"Test Mapping Profile started at {DateTime.Now}");
+        
     }
 
     [Fact]
@@ -53,10 +51,38 @@ public class MappingProfileTests : IClassFixture<MappingProfileTestsFixture>
         };
 
         // Act
-        UserDTO actualDTO = _mapper.Map<UserDTO>(user);
+        UserDTO actualDto = _mapper.Map<UserDTO>(user);
 
         // Assert
-        actualDTO.Should().BeEquivalentTo(expectedDto);
+        actualDto.Should().BeEquivalentTo(expectedDto);
+    }
+    [Fact]
+    public void ShouldMapChannelToChannelDto()
+    {
+        // Arrange
+        Channel channel = _fixture.CreateChannel(); 
+        ChannelDTO expectedDto = _fixture.CreateExpectedChannelDTO();
+
+        // Act
+        ChannelDTO actualDto = _mapper.Map<ChannelDTO>(channel);
+        
+        // Assert
+        actualDto.Should().BeEquivalentTo(expectedDto);
     }
 
+    [Fact]
+    public void ShouldMapChangedChannelDtoToEquivalentChannel()
+    {
+        // Arrange
+        ChannelDTO channelDto = _fixture.CreateSimilarChannelDTO();
+        Channel equivalentChannel = _fixture.CreateChannel();
+        //Act
+        _mapper.Map(channelDto, equivalentChannel);
+        //Assert
+        equivalentChannel.Id.Should().NotBe(channelDto.Id);
+        equivalentChannel.Name.Should().Be(channelDto.Name);
+        equivalentChannel.Description.Should().Be(channelDto.Description);
+        equivalentChannel.PrimaryAdmin.Id.Should().NotBe(channelDto.PrimaryAdmin.Id);
+        equivalentChannel.PrimaryAdmin.Name.Should().Be(channelDto.PrimaryAdmin.Name);
+    }
 }

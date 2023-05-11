@@ -1,9 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using TeleWeb.Domain.Models;
 using TeleWeb.Application.DTOs;
 using TeleWeb.Application.Services.Interfaces;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TeleWeb.Data.Repositories.Interfaces;
-using TeleWeb.Domain.Models;
 
 namespace TeleWeb.Application.Services
 {
@@ -18,9 +18,9 @@ namespace TeleWeb.Application.Services
             _mapper = mapper;
         }
 
-        public async Task CreateAsync(ChannelDTO channelDTO)
+        public async Task CreateAsync(ChannelDTO channelDto)
         {
-            var channel = _mapper.Map<Channel>(channelDTO);
+            var channel = _mapper.Map<Channel>(channelDto);
             await _channelRepository.CreateAsync(channel);
             await _channelRepository.SaveRepoChangesAsync();
         }
@@ -32,20 +32,25 @@ namespace TeleWeb.Application.Services
                 await _channelRepository.DeleteAsync(channel);
         }
 
-        public Task<IEnumerable<UserDTO>> GetAllAsync()
+        public async Task<IEnumerable<ChannelDTO>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var channels = await _channelRepository.FindAll(false).ToListAsync();
+            return _mapper.Map<IEnumerable<ChannelDTO>>(channels);
         }
 
-        public async Task<UserDTO> GetByIdAsync(int id)
+        public async Task<ChannelDTO> GetByIdAsync(int id)
         {
-            var channel = await _channelRepository.FindByCondition(x => x.Id == id, true).FirstOrDefaultAsync();
-            return _mapper.Map<UserDTO>(channel);
+            var channel = await _channelRepository.FindByCondition(x => x.Id == id, false)
+                .FirstOrDefaultAsync();
+            return _mapper.Map<ChannelDTO>(channel);
         }
 
-        public Task UpdateAsync(int id, ChannelDTO channelDTO)
+        public async Task UpdateAsync(int id, ChannelDTO channelDto)
         {
-            throw new NotImplementedException();
+            var channelToUpdate = await _channelRepository.FindByCondition(x=>x.Id==id, true).FirstOrDefaultAsync();
+            if (channelToUpdate == null) throw new Exception();
+            _mapper.Map(channelDto, channelToUpdate);
+            await _channelRepository.UpdateAsync(channelToUpdate);
         }
     }
 }

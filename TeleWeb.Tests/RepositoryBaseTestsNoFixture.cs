@@ -5,6 +5,8 @@ using TeleWeb.Tests.Fixtures;
 
 namespace TeleWeb.Tests
 {
+    
+    [Trait("Optional ", "NoFixture")]
     public class RepositoryBaseTestsNoFixture
     {
         private readonly DbFixture2 _dbFixture;
@@ -21,6 +23,7 @@ namespace TeleWeb.Tests
             }
         }
 
+        [Trait("Optional ", "CreateAsync")]
         [Fact]
         public async Task CreateAsync_Should_Add_Entity_To_DbContext()
         {
@@ -42,6 +45,7 @@ namespace TeleWeb.Tests
             }
         }
 
+        [Trait("Optional", "UpdateAsync")]
         [Fact]
         public async Task UpdateAsync_Should_Update_Entity_In_DbContext()
         {

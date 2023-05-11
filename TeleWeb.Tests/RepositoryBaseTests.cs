@@ -2,16 +2,19 @@
 using TeleWeb.Data.Repositories;
 using TeleWeb.Domain.Models;
 using TeleWeb.Tests.Fixtures;
+using Xunit.Abstractions;
 
 namespace TeleWeb.Tests;
 
 public class RepositoryBaseTests : IClassFixture<DbFixture>
 {
     private readonly DbFixture _dbFixture;
-
-    public RepositoryBaseTests(DbFixture dbFixture)
+    private readonly ITestOutputHelper _testOutputHelper;
+    public RepositoryBaseTests(DbFixture dbFixture, ITestOutputHelper testOutputHelper)
     {
         _dbFixture = dbFixture;
+        _testOutputHelper = testOutputHelper;
+        _testOutputHelper.WriteLine($"Test Repository Base started at {DateTime.Now}");
     }
     private class RepositoryBaseChannel: RepositoryBase<Channel>
     {
@@ -19,21 +22,32 @@ public class RepositoryBaseTests : IClassFixture<DbFixture>
         {
         }
     }
-    [Fact]
-    public async Task CreateAsync_Should_Add_Entity_To_DbContext()
+    public static IEnumerable<object[]> GetCreateAsyncTestData()
+    {
+        return new List<object[]>
+        {
+            new object[] { new Channel { Id = 1, Name = "John Smith",  } },
+            new object[] { new Channel { Id = 2, Name = "Jane Doe",  } },
+            new object[] { new Channel { Id = 3, Name = "Bob Johnson",  } }
+        };
+    }
+    
+    [Theory]
+    [MemberData(nameof(GetCreateAsyncTestData))]
+    public async Task CreateAsync_Should_Add_Entity_To_DbContext(Channel channel)
     {
         // Arrange
         using (var dbContext = _dbFixture.CreateDbContext())
         {
             var repositoryBase = new RepositoryBaseChannel(dbContext);
-            var entity = new Channel { Name = "Something" };
+            var entity = channel;
 
             // Act
             await repositoryBase.CreateAsync(entity); // Invoke the base RepositoryBase method being tested
 
             // Assert
             Assert.Contains(entity, dbContext.Set<Channel>().Local); // Verify that the entity is added to the in-memory database
-            var entity2 = new Channel { Name = "Something" };
+            var entity2 = new Channel { Name = channel.Name };
             Assert.DoesNotContain(entity2, dbContext.Set<Channel>().Local); // Verify that the entity is not added to the in-memory database
         }
     }

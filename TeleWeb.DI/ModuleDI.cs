@@ -21,21 +21,13 @@ namespace TeleWeb.DI
         protected override void Load(ContainerBuilder builder)
         {
             RegisterDBContext(builder);
-          //  RegisterIdentityDBContext(builder);
             RegisterRepositories(builder);
             RegisterServices(builder);
             RegisterConfiguration(builder);
-            RegisterIdentity(builder);            
+
+
         }
 
-       
-
-        private void RegisterIdentity(ContainerBuilder builder)
-        {
-               // builder.RegisterType<UserManager<User>>().AsSelf();
-                //builder.RegisterType<SignInManager<User>>().AsSelf();
-            
-        }
 
         private void RegisterConfiguration(ContainerBuilder builder)
         {
@@ -49,7 +41,7 @@ namespace TeleWeb.DI
             builder.RegisterType<TeleWebDbContext>()
                 .WithParameter((pi, ctx) => pi.ParameterType == typeof(DbContextOptions<TeleWebDbContext>),
                       (pi, ctx) => DbContextOptionsFactory(connectionString))
-                .SingleInstance();
+                .InstancePerLifetimeScope();
 
             builder.Register(context => context.Resolve<TeleWebDbContext>().Database)
             .As<DatabaseFacade>()

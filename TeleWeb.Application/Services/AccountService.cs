@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace TeleWeb.Application.Services
 {
-    public class AccountService : IAccountService
+    public class  AccountService : IAccountService
     {
         private readonly UserManager<UserIdentity> _userManager;
         private readonly SignInManager<UserIdentity> _signInManager;
