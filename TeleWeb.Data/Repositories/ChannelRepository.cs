@@ -11,5 +11,10 @@ namespace TeleWeb.Data.Repositories
         {
             _dbContext = dbContext;
         }
+
+        public IQueryable<Post> FindPostsByChannelId(int channelId)
+        {
+            return _dbContext.Channels.Where(x => x.Id == channelId).SelectMany(x => x.Posts);
+        }
     }
 }

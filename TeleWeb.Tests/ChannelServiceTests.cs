@@ -49,9 +49,7 @@ public class ChannelServiceTests
         };
         var expected = new ChannelDTO { Id = 2, Name = "Channel 2" };
         var channels = repoChannels.AsQueryable().Where(x=>x.Id==2);
-        
-        var c = channels.FirstOrDefault();//ok
-        var d = await channels.AsEnumerable().FirstOrDefaultAsync();// not ok
+       
         IQueryable<Channel> queryableChannels = repoChannels.AsQueryable();
         mockRepository.Setup(repo => repo.FindByCondition(x=>x.Id==2,false)).Returns(channels);
 
@@ -66,7 +64,7 @@ public class ChannelServiceTests
         var result = await channelService.GetByIdAsync(2);
         
         // Assert
-        Assert.Equal(expected, result);
+        expected.Should().BeEquivalentTo(result);
     }
     
 }

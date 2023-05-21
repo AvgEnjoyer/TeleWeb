@@ -14,12 +14,7 @@ namespace TeleWeb.Data
         public IdentityContext(DbContextOptions<IdentityContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
-        }
-
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
+            //Database.EnsureCreated();
         }
     }
 }

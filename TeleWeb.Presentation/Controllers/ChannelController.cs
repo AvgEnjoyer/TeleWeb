@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeleWeb.Application.DTOs;
 using TeleWeb.Application.Services.Interfaces;
@@ -46,6 +47,7 @@ public class ChannelController : ControllerBase
         }
     }
     [HttpPost]
+    [Authorize(Roles = "AuthorizedUser")]
     public async Task<ActionResult> CreateChannel(ChannelDTO channelDTO)
     {
         var validationResult = await _channelValidator.ValidateAsync(channelDTO);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using TeleWeb.Application.DTOs;
 using TeleWeb.Application.Services.Interfaces;
 
@@ -42,7 +43,8 @@ namespace TeleWeb.Presentation.Controllers
         }
         
         [HttpPost("login")]
-        public async Task<IActionResult> Login(AccountLoginDTO model)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] AccountLoginDTO model)
         {
             
             if (HttpContext.User.Identities.Any(i=>i.HasClaim(c=>c.Value=="AuthorizedUser"))) //.IsInRole("AuthorizedUser"))
@@ -55,10 +57,9 @@ namespace TeleWeb.Presentation.Controllers
                 : BadRequest("Invalid credentials");
         }
         [HttpPost("logout")]
-        public async Task<IActionResult> SignOut(string? returnUrl = null)
+        public async Task SignOut()
         {
-            await _accountService.LogOutAsync();
-            return LocalRedirect(returnUrl ?? "/");
+             await _accountService.LogOutAsync();
         }
     }
 }

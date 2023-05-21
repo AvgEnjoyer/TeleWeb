@@ -3,14 +3,10 @@ using Autofac.Extensions.DependencyInjection;
 using FluentValidation;
 using TeleWeb.DI;
 using TeleWeb.Presentation.AppStartExtensions;
-using Microsoft.EntityFrameworkCore.Design;
 using TeleWeb.Domain.Models;
 using TeleWeb.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using FluentValidation.AspNetCore;
-using TeleWeb.Application.DTOs;
 using TeleWeb.Validation;
 
 
@@ -19,30 +15,57 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder => containerBuilder.RegisterModule(new ModuleDI(builder.Configuration)));
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Account/login";
-        options.AccessDeniedPath = "/Account/AccessDenied";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-        options.SlidingExpiration = true;
-    });
-
-// Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCustomAutoMapper();
-
 builder.Services.AddDbContext<IdentityContext>(option => option.UseSqlServer(
     builder.Configuration.GetConnectionString("IdentityConnection")
     ));
+builder.Services.AddIdentity<UserIdentity, IdentityRole>(options =>
+    {
+        
+        options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+    } ).AddEntityFrameworkStores<IdentityContext>()
+    .AddTokenProvider<DataProtectorTokenProvider<UserIdentity>>(TokenOptions.DefaultProvider);//AddDefaultTokenProviders();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+});
+/*builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["AuthSettings:Audience"],
+        ValidIssuer = builder.Configuration["AuthSettings:Issuer"],
+        RequireExpirationTime = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AuthSettings:Key"])),
+        ValidateIssuerSigningKey = true
+    };
+});*/
 
-builder.Services.AddIdentity<UserIdentity, IdentityRole>()
-    .AddEntityFrameworkStores<IdentityContext>()
-    .AddDefaultTokenProviders();
+/*builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+}).AddCookie(options =>
+{
+    options = new CookieAuthenticationOptions()
+    {
+        LoginPath = "/Account/Login",
+        AccessDeniedPath = "/Account/AccessDenied",
+        ReturnUrlParameter = "ReturnUrl",
+        ExpireTimeSpan = TimeSpan.FromMinutes(5),
+    };
+});*/
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
 builder.Services.AddCors(co=>
@@ -53,20 +76,18 @@ builder.Services.AddCors(co=>
     });
 });
 
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseCors("Policy");
-app.UseAuthentication();
+//app.UseAuthentication();
 app.UseHttpsRedirection();
-
-
 app.UseStaticFiles(new StaticFileOptions
 {
     OnPrepareResponse = context =>
@@ -84,13 +105,7 @@ app.UseStaticFiles(new StaticFileOptions
         }
     }
 });
-
-
 app.UseRouting();
-
 app.UseAuthorization();
-
-
 app.MapControllers();
-
 app.Run();

@@ -15,7 +15,7 @@ namespace TeleWeb.DI
 
         public ModuleDI(IConfiguration configuration)
         {
-            _configuration = configuration;
+            _configuration = configuration;//remove
         }
 
         protected override void Load(ContainerBuilder builder)

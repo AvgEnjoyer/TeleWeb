@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
+
 namespace TeleWeb
 {
+    [Authorize]
     public class WeatherForecast
     {
         public DateOnly Date { get; set; }
