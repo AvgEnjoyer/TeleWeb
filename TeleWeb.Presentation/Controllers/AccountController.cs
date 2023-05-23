@@ -10,7 +10,7 @@ namespace TeleWeb.Presentation.Controllers
     [Route("[controller]")]
     public class AccountController : ControllerBase
     {
-        
+
         private readonly IAccountService _accountService;
 
         public AccountController(IAccountService accountService)
@@ -18,7 +18,7 @@ namespace TeleWeb.Presentation.Controllers
             _accountService = accountService;
         }
 
-        
+
         [HttpPost("register")]
         public async Task<IActionResult> Register(AccountRegisterDTO model)
         {
@@ -41,25 +41,63 @@ namespace TeleWeb.Presentation.Controllers
 
             return Ok();
         }
-        
-        [HttpPost("login")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] AccountLoginDTO model)
+
+        [HttpGet("confirm")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
-            
-            if (HttpContext.User.Identities.Any(i=>i.HasClaim(c=>c.Value=="AuthorizedUser"))) //.IsInRole("AuthorizedUser"))
+            try
             {
-                return BadRequest("You are already logged in");
+                await _accountService.ConfirmEmailAsync(userId, token);
+                return Ok("Email confirmed successfully!");
+
+            }
+            catch (Exception e)
+            {
+                return ExceptionResult(e);
+            }
+        }
+        [HttpGet("forgot")]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            try
+            {
+                await _accountService.ForgotPasswordAsync(email);
+                return Ok("Email confirmed successfully!");
+
+            }
+            catch (Exception e)
+            {
+                return ExceptionResult(e);
+            }
+        }
+        [HttpGet("reset")]
+        public async Task<IActionResult> ResetPassword(string userId, string token, string newPassword)
+        {
+            try
+            {
+                await _accountService.ResetPasswordAsync(userId, token, newPassword);
+                return Ok("Email confirmed successfully!");
+
+            }
+            catch (Exception e)
+            {
+                return ExceptionResult(e);
+            }
+        }
+
+            [HttpPost("login")]
+            public async Task<IActionResult> Login([FromBody] AccountLoginDTO model)
+            {
+                return await _accountService.LoginUserAsync(model)
+                    ? Ok()
+                    : BadRequest("Invalid credentials");
             }
 
-            return await _accountService.LoginUserAsync(model) 
-                ? Ok() 
-                : BadRequest("Invalid credentials");
-        }
-        [HttpPost("logout")]
-        public async Task SignOut()
-        {
-             await _accountService.LogOutAsync();
-        }
+            [HttpPost("logout")]
+            public async Task SignOut()
+            {
+                await _accountService.LogOutAsync();
+            }
+        
     }
 }

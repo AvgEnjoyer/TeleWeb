@@ -24,6 +24,8 @@ namespace TeleWeb.DI
             RegisterRepositories(builder);
             RegisterServices(builder);
             RegisterConfiguration(builder);
+
+
         }
 
 

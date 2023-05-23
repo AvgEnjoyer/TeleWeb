@@ -8,9 +8,10 @@ namespace TeleWeb.Tests.Fixtures;
 public class MappingProfileTestsFixture
 {
     public IMapper Mapper { get; }
-
+    private Guid g1= Guid.NewGuid(), g2= Guid.NewGuid(), g3= Guid.NewGuid(), g4= Guid.NewGuid();
     public MappingProfileTestsFixture()
     {
+        
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<MappingProfile>();
@@ -23,11 +24,11 @@ public class MappingProfileTestsFixture
         
         return new Channel
         {
-            Id = 1,
+            Id = g1,
             Name = "John Doe",
             Description = "johndoe",
             SubscribersCount = 1221,
-            PrimaryAdmin = new Admin { Id = 111, Name = "John Doe"},
+            PrimaryAdmin = new Admin { Id = g3, Name = "John Doe"},
             Subscribers = new List<User>()
             //...
         };
@@ -37,20 +38,20 @@ public class MappingProfileTestsFixture
     {
         return new ChannelDTO()
         {
-            Id = 1,
+            Id = g1,
             Name = "John Doe",
             Description = "johndoe",
-            PrimaryAdmin = new AdminDTO { Id = 111, Name = "John Doe"}
+            PrimaryAdmin = new AdminDTO { Id = g3, Name = "John Doe"}
         };
     }
     public ChannelDTO CreateSimilarChannelDTO()
     {
         return new ChannelDTO()
         {
-            Id = 2,
+            Id = g2,
             Name = "Jane Doe",
             Description = "johndoe2",
-            PrimaryAdmin = new AdminDTO { Id = 112, Name = "Jane Doe"}
+            PrimaryAdmin = new AdminDTO { Id = g4, Name = "Jane Doe"}
         };
     }
     

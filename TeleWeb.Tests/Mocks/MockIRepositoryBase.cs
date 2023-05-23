@@ -24,9 +24,9 @@ internal class MockIChannelRepository  : MockIRepositoryBase<Channel>, IReposito
         // return a list of mock elements
         return new List<Channel>
         {
-            new Channel {Id = 1, Name = "Channel 1"},
-            new Channel {Id = 2, Name = "Channel 2"},
-            new Channel {Id = 3, Name = "Channel 3"}
+            new Channel {Name = "Channel 1"},
+            new Channel {Name = "Channel 2"},
+            new Channel {Name = "Channel 3"}
         };
     }
 }

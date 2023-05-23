@@ -5,7 +5,7 @@ namespace TeleWeb.Domain.Models
     public class Post
     {
         [Key]
-        public int Id { get; private set; }
+        public Guid Id { get; private set; }
         public string? Text { get; set; }
         [Required]
         public DateTime Date { get; set; }

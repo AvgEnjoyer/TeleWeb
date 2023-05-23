@@ -19,14 +19,14 @@ namespace TeleWeb.Application.Services
             _autoMapper = mapper;
         }
 
-        public async Task<UserDTO> GetByIdAsync(int id)
+        public async Task<UserDTO> GetByIdAsync(Guid id)
         {
             var user = await _userRepository.GetByIdAsync(id);
             var userDTO = _autoMapper.Map<UserDTO>(user);
             return userDTO;
         }
         
-        public async Task UpdateAsync(int id, UserDTO userDTO)
+        public async Task UpdateAsync(Guid id, UserDTO userDTO)
         {
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null)
@@ -53,7 +53,7 @@ namespace TeleWeb.Application.Services
             await _userRepository.SaveRepoChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             await _userRepository.DeleteAsync(id);
         }

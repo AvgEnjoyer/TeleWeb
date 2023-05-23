@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeleWeb.Data;
 
@@ -11,9 +12,11 @@ using TeleWeb.Data;
 namespace TeleWeb.Data.Migrations
 {
     [DbContext(typeof(TeleWebDbContext))]
-    partial class TeleWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230521181953_Fourth")]
+    partial class Fourth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,11 +27,11 @@ namespace TeleWeb.Data.Migrations
 
             modelBuilder.Entity("ChannelAdmin", b =>
                 {
-                    b.Property<Guid>("AdminId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("AdminId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("ChannelId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("ChannelId")
+                        .HasColumnType("int");
 
                     b.HasKey("AdminId", "ChannelId");
 
@@ -39,9 +42,11 @@ namespace TeleWeb.Data.Migrations
 
             modelBuilder.Entity("TeleWeb.Domain.Models.Channel", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -55,8 +60,8 @@ namespace TeleWeb.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PrimaryAdminId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("PrimaryAdminId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("SubscribersCount")
                         .HasColumnType("int");
@@ -74,12 +79,14 @@ namespace TeleWeb.Data.Migrations
 
             modelBuilder.Entity("TeleWeb.Domain.Models.MediaFile", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -94,21 +101,23 @@ namespace TeleWeb.Data.Migrations
 
             modelBuilder.Entity("TeleWeb.Domain.Models.Post", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AdminWhoPostedId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("ChannelId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("AdminWhoPostedId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChannelId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("PostId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("PostId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
@@ -132,11 +141,13 @@ namespace TeleWeb.Data.Migrations
 
             modelBuilder.Entity("TeleWeb.Domain.Models.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<DateTime?>("DateOfBirth")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Discriminator")
@@ -144,14 +155,26 @@ namespace TeleWeb.Data.Migrations
                         .HasMaxLength(5)
                         .HasColumnType("nvarchar(5)");
 
-                    b.Property<Guid>("IdentityId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TelegramId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -165,11 +188,11 @@ namespace TeleWeb.Data.Migrations
 
             modelBuilder.Entity("UserChannelSubscription", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("ChannelId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("ChannelId")
+                        .HasColumnType("int");
 
                     b.HasKey("UserId", "ChannelId");
 

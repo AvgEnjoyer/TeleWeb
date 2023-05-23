@@ -4,9 +4,9 @@ namespace TeleWeb.Application.Services.Interfaces;
 
 public interface IPostService
 {
-    public Task<IEnumerable<PostDTO>> GetAllFromChannelAsync(int channelId);
-    public Task<PostDTO> GetByIdAsync(int id);
-    public Task CreateAsync(PostDTO postDTO, int channelId);
-    public Task UpdateAsync(int id, PostDTO postDTO);
-    public Task DeleteAsync(int id);
+    public Task<IEnumerable<PostDTO>> GetAllFromChannelAsync(Guid channelId);
+    public Task<PostDTO> GetByIdAsync(Guid id);
+    public Task CreateAsync(PostDTO postDTO, Guid channelId);
+    public Task UpdateAsync(Guid id, PostDTO postDTO);
+    public Task DeleteAsync(Guid id);
 }

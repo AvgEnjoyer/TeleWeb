@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeleWeb.Data;
 
@@ -11,9 +12,11 @@ using TeleWeb.Data;
 namespace TeleWeb.Data.Migrations
 {
     [DbContext(typeof(TeleWebDbContext))]
-    partial class TeleWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230523130924_Fifth")]
+    partial class Fifth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

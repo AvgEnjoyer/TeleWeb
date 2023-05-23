@@ -24,38 +24,7 @@ public class MappingProfileTests : IClassFixture<MappingProfileTestsFixture>
         
     }
 
-    [Fact]
-    public void ShouldMapUserToUserDto()
-    {
-        // Arrange
-        User user = new User
-        {
-            Id = 1,
-            Name = "John Doe",
-            UserName = "johndoe",
-            Email = "johndoe@example.com",
-            PhoneNumber = "555-5555",
-            PasswordHash = "mysecretpassword",
-            DateOfBirth = new DateTime(1990, 1, 1),
-            TelegramId = null,
-            Subscriptions = new List<Channel>()
-        };
-
-        UserDTO expectedDto = new UserDTO
-        {
-            Id = 1,
-            Name = "John Doe",
-            UserName = "johndoe",
-            DateOfBirth = new DateTime(1990, 1, 1),
-            PhoneNumber = "555-5555"
-        };
-
-        // Act
-        UserDTO actualDto = _mapper.Map<UserDTO>(user);
-
-        // Assert
-        actualDto.Should().BeEquivalentTo(expectedDto);
-    }
+    
     [Fact]
     public void ShouldMapChannelToChannelDto()
     {

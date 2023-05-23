@@ -7,6 +7,7 @@ using TeleWeb.Domain.Models;
 using TeleWeb.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using TeleWeb.Application;
 using TeleWeb.Validation;
 
 
@@ -19,6 +20,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCustomAutoMapper();
+
+
+
+builder.Services.AddDbContext<TeleWebDbContext>(option => option.UseSqlServer(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+));
 builder.Services.AddDbContext<IdentityContext>(option => option.UseSqlServer(
     builder.Configuration.GetConnectionString("IdentityConnection")
     ));
@@ -67,7 +74,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });*/
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
+builder.Services.AddValidatorsFromAssemblyContaining<IFluentValidationAssemblyMarker>();
 builder.Services.AddCors(co=>
 {
     co.AddPolicy("Policy", builder =>
@@ -108,4 +115,21 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await RoleInitializer.InitializeAsync(roleManager);
+    }
+    catch(Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database."+DateTime.Now.ToString());
+    }
+}
+
+
+
 app.Run();

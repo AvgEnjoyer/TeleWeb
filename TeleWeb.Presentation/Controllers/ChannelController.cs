@@ -34,7 +34,7 @@ public class ChannelController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<IEnumerable<ChannelDTO>>> GetChannelById(int id)
+    public async Task<ActionResult<IEnumerable<ChannelDTO>>> GetChannelById(Guid id)
     {
         try
         {
@@ -64,7 +64,7 @@ public class ChannelController : ControllerBase
         }
     }
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateChannel(int id, ChannelDTO channelDTO)
+    public async Task<ActionResult> UpdateChannel(Guid id, ChannelDTO channelDTO)
     {
         try
         {
@@ -78,7 +78,7 @@ public class ChannelController : ControllerBase
     }
 
     [HttpDelete("{id}")] 
-    public async Task<ActionResult> DeleteChannel(int id)
+    public async Task<ActionResult> DeleteChannel(Guid id)
     {
         try
         {

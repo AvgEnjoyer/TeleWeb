@@ -7,5 +7,8 @@ namespace TeleWeb.Application.Services.Interfaces
         public Task<IdentityResult> RegisterUserAsync(AccountRegisterDTO model);
         public Task<bool> LoginUserAsync(AccountLoginDTO model);
         public Task LogOutAsync();
+        public Task ConfirmEmailAsync(string userId, string token);
+        public Task ForgotPasswordAsync(string email);
+        public Task ResetPasswordAsync(string userId, string token, string newPassword);
     }
 }

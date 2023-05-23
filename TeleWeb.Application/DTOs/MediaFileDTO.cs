@@ -10,7 +10,7 @@ namespace TeleWeb.Application.DTOs
 {
     public class MediaFileDTO
     {
-        public int Id { get; private set; }
+        public Guid Id { get; private set; }
         public string Url { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         

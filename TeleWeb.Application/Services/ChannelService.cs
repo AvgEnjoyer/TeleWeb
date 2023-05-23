@@ -25,7 +25,7 @@ namespace TeleWeb.Application.Services
             await _channelRepository.SaveRepoChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var channel = await _channelRepository.FindByCondition(x => x.Id == id, true).FirstOrDefaultAsync();
             if(channel!=null)
@@ -38,14 +38,14 @@ namespace TeleWeb.Application.Services
             return _mapper.Map<IEnumerable<ChannelDTO>>(channels);
         }
 
-        public async Task<ChannelDTO> GetByIdAsync(int id)
+        public async Task<ChannelDTO> GetByIdAsync(Guid id)
         {
             var channel = await _channelRepository.FindByCondition(x => x.Id == id, false)
                 .FirstOrDefaultAsync();
             return _mapper.Map<ChannelDTO>(channel);
         }
 
-        public async Task UpdateAsync(int id, ChannelDTO channelDto)
+        public async Task UpdateAsync(Guid id, ChannelDTO channelDto)
         {
             var channelToUpdate = await _channelRepository.FindByCondition(x=>x.Id==id, true).FirstOrDefaultAsync();
             if (channelToUpdate == null) throw new Exception();

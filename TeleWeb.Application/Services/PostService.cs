@@ -20,7 +20,7 @@ namespace TeleWeb.Application.Services
             _mapper = mapper;
         }
 
-        public async Task CreateAsync(PostDTO postDto, int channelId)
+        public async Task CreateAsync(PostDTO postDto, Guid channelId)
         {
             var channel = await _channelRepository.FindByCondition(x => x.Id == channelId, true).FirstOrDefaultAsync();
             if (channel == null)
@@ -34,28 +34,28 @@ namespace TeleWeb.Application.Services
         }
 
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var post = await _postRepository.FindByCondition(x => x.Id == id, true).FirstOrDefaultAsync();
             if(post!=null)
                 await _postRepository.DeleteAsync(post);
         }
 
-        public async Task<IEnumerable<PostDTO>> GetAllFromChannelAsync(int channelId)
+        public async Task<IEnumerable<PostDTO>> GetAllFromChannelAsync(Guid channelId)
         {
             var posts = await _channelRepository.FindPostsByChannelId(channelId).ToListAsync();
             return _mapper.Map<IEnumerable<PostDTO>>(posts);
         }
 
 
-        public async Task<PostDTO> GetByIdAsync(int id)
+        public async Task<PostDTO> GetByIdAsync(Guid id)
         {
             var post = await _postRepository.FindByCondition(x => x.Id == id, false)
                 .FirstOrDefaultAsync();
             return _mapper.Map<PostDTO>(post);
         }
 
-        public async Task UpdateAsync(int id, PostDTO postDto)
+        public async Task UpdateAsync(Guid id, PostDTO postDto)
         {
             var postToUpdate = await _postRepository.FindByCondition(x=>x.Id==id, true).FirstOrDefaultAsync();
             if (postToUpdate == null) throw new Exception();

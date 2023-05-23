@@ -4,7 +4,7 @@ namespace TeleWeb.Domain.Models
     public class Channel
     {
         [Key]
-        public int Id { get;  init; }
+        public Guid Id { get;  init; }
         [Required]
         public string Name { get; set; } = String.Empty;
         public string? Description { get; set; }

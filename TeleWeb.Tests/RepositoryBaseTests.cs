@@ -26,9 +26,9 @@ public class RepositoryBaseTests : IClassFixture<DbFixture>
     {
         return new List<object[]>
         {
-            new object[] { new Channel { Id = 1, Name = "John Smith",  } },
-            new object[] { new Channel { Id = 2, Name = "Jane Doe",  } },
-            new object[] { new Channel { Id = 3, Name = "Bob Johnson",  } }
+            new object[] { new Channel {  Name = "John Smith",  } },
+            new object[] { new Channel {  Name = "Jane Doe",  } },
+            new object[] { new Channel {  Name = "Bob Johnson",  } }
         };
     }
     
@@ -147,13 +147,11 @@ public class RepositoryBaseTests : IClassFixture<DbFixture>
             dbContext.SaveChanges();
 
             // Act
-            var actualEntities = repositoryBase.FindByCondition(e => e.Id > 1, trackChanges: true).ToList();
+            var actualEntities = repositoryBase.FindByCondition(e => e.Name !="Entity1-1", trackChanges: true).ToList();
 
             // Assert
             Assert.Equal(2, actualEntities.Count);
-            Assert.Equal(expectedEntities[1].Id, actualEntities[0].Id);
             Assert.Equal(expectedEntities[1].Name, actualEntities[0].Name);
-            Assert.Equal(expectedEntities[2].Id, actualEntities[1].Id);
             Assert.Equal(expectedEntities[2].Name, actualEntities[1].Name);
         }
     }

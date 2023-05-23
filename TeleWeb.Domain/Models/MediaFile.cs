@@ -12,7 +12,7 @@ namespace TeleWeb.Domain.Models
             Document
         }
         [Key]
-        public int Id { get; private set; }
+        public Guid Id { get; private set; }
         [Required]
         public string Url { get; set; } = string.Empty;
         [Required]

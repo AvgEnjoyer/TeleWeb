@@ -36,7 +36,7 @@ namespace TeleWeb.Presentation.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDTO>> GetUserById(int id)
+        public async Task<ActionResult<UserDTO>> GetUserById(Guid id)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace TeleWeb.Presentation.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserDTO userDTO)
+        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UserDTO userDTO)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace TeleWeb.Presentation.Controllers
 
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(Guid id)
         {
             try
             {
@@ -109,25 +109,10 @@ namespace TeleWeb.Presentation.Controllers
         }
         [Authorize(policy: "AuthorizedUser")]
         [HttpGet("me")]
-        public async Task<ActionResult<UserDTO>> GetMeAsync()
+        public async Task GetMeAsync()
         {
-            try
-            {
-                // Get the current user's ID
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                // Use the ID to retrieve the user from the database
-                var userDTO = await _userService.GetByIdAsync(Convert.ToInt32(userId));
-                return Ok(userDTO);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            //TODO: Get user id from token
+            
         }
 
     }

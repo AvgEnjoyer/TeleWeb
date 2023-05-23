@@ -12,7 +12,7 @@ namespace TeleWeb.Data.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<User> GetByIdAsync(int id)
+        public async Task<User> GetByIdAsync(Guid id)
         {
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
@@ -43,7 +43,7 @@ namespace TeleWeb.Data.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var userToDelete = await _dbContext.Users.FindAsync(id);
             if (userToDelete == null)

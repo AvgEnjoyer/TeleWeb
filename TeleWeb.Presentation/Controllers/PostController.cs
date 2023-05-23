@@ -18,7 +18,7 @@ public class PostController : ControllerBase
         _postValidator = postValidator;
     }
     [HttpGet("{channelId}")]
-    public async Task<ActionResult<IEnumerable<PostDTO>>> GetAllPostsFromChannel(int channelId)
+    public async Task<ActionResult<IEnumerable<PostDTO>>> GetAllPostsFromChannel(Guid channelId)
     {
         try
         {
@@ -32,7 +32,7 @@ public class PostController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<IEnumerable<PostDTO>>> GetPostById(int id)
+    public async Task<ActionResult<IEnumerable<PostDTO>>> GetPostById(Guid id)
     {
         try
         {
@@ -45,7 +45,7 @@ public class PostController : ControllerBase
         }
     }
     [HttpPost]
-    public async Task<ActionResult> CreatePost(PostDTO postDTO, int channelID)
+    public async Task<ActionResult> CreatePost(PostDTO postDTO, Guid channelID)
     {
         var validationResult = await _postValidator.ValidateAsync(postDTO);
         if(!validationResult.IsValid)
@@ -61,7 +61,7 @@ public class PostController : ControllerBase
         }
     }
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdatePost(int id, PostDTO postDTO)
+    public async Task<ActionResult> UpdatePost(Guid id, PostDTO postDTO)
     {
         try
         {
@@ -75,7 +75,7 @@ public class PostController : ControllerBase
     }
 
     [HttpDelete("{id}")] 
-    public async Task<ActionResult> DeletePost(int id)
+    public async Task<ActionResult> DeletePost(Guid id)
     {
         try
         {

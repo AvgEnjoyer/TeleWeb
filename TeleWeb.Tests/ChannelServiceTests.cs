@@ -39,29 +39,31 @@ public class ChannelServiceTests
     {
         // Arrange
         var mockRepository = new Mock<IChannelRepository>();
-        var mockMapper = new Mock<IMapper>();
         
+        Guid id = Guid.NewGuid();
         var repoChannels = new List<Channel>
         {
-            new Channel { Id = 1, Name = "Channel 1" },
-            new Channel { Id = 2, Name = "Channel 2" },
-            new Channel { Id = 3, Name = "Channel 3" }
+            new Channel {  Name = "Channel 1" },
+            new Channel { Id=id, Name = "Channel 2" },
+            new Channel { Name = "Channel 3" }
         };
-        var expected = new ChannelDTO { Id = 2, Name = "Channel 2" };
-        var channels = repoChannels.AsQueryable().Where(x=>x.Id==2);
+        var expected = new ChannelDTO { Id = id, Name = "Channel 2" };
+        var channels = repoChannels.AsQueryable().Where(x => x.Name == "Channel 2");
        
         IQueryable<Channel> queryableChannels = repoChannels.AsQueryable();
-        mockRepository.Setup(repo => repo.FindByCondition(x=>x.Id==2,false)).Returns(channels);
+        mockRepository.Setup(repo => repo.FindByCondition(x=>x.Id==id,false)).Returns(channels);
 
 
-        mockMapper.Setup(mapper => mapper.Map<ChannelDTO>(It.IsAny<Channel>())).Returns((Channel ch) => new ChannelDTO { Id = ch.Id, Name = ch.Name });
+        var mockMapper = new Mock<IMapper>();
 
+        var channel = new Channel(); // Create a non-null Channel object
+        mockMapper.Setup(mapper => mapper.Map<ChannelDTO>(It.IsAny<Channel>()))
+            .Returns((Channel ch) => new ChannelDTO { Id = ch.Id, Name = ch.Name });
 
-        
         var channelService = new ChannelService(mockRepository.Object, mockMapper.Object);
         
         // Act
-        var result = await channelService.GetByIdAsync(2);
+        var result = await channelService.GetByIdAsync(id);
         
         // Assert
         expected.Should().BeEquivalentTo(result);
