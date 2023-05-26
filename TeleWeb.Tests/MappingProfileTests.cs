@@ -30,28 +30,43 @@ public class MappingProfileTests : IClassFixture<MappingProfileTestsFixture>
     {
         // Arrange
         Channel channel = _fixture.CreateChannel(); 
-        ChannelDTO expectedDto = _fixture.CreateExpectedChannelDTO();
+        GetChannelDTO expectedDto = _fixture.CreateExpectedChannelDTO();
 
         // Act
-        ChannelDTO actualDto = _mapper.Map<ChannelDTO>(channel);
+        GetChannelDTO actualDto = _mapper.Map<GetChannelDTO>(channel);
+        UpdateChannelDTO actualUpdateDto = _mapper.Map<UpdateChannelDTO>(channel);
         
         // Assert
         actualDto.Should().BeEquivalentTo(expectedDto);
+        actualUpdateDto.Name.Should().BeEquivalentTo(expectedDto.Name);
+        actualUpdateDto.Description.Should().BeEquivalentTo(expectedDto.Description);
+    }
+    [Fact]
+    public void ShouldMapChannelDtoToChannel()
+    {
+        // Arrange
+        UpdateChannelDTO channelDTO = _fixture.CreateExpectedUpdateChannelDTO();
+
+        // Act
+        Channel channel = _mapper.Map<Channel>(channelDTO);
+        
+        // Assert
+        
+        channel.Name.Should().BeEquivalentTo(channelDTO.Name);
+        channel.Description.Should().BeEquivalentTo(channelDTO.Description);
     }
 
     [Fact]
     public void ShouldMapChangedChannelDtoToEquivalentChannel()
     {
         // Arrange
-        ChannelDTO channelDto = _fixture.CreateSimilarChannelDTO();
+        GetChannelDTO channelDto = _fixture.CreateSimilarChannelDTO();
         Channel equivalentChannel = _fixture.CreateChannel();
         //Act
         _mapper.Map(channelDto, equivalentChannel);
         //Assert
-        equivalentChannel.Id.Should().NotBe(channelDto.Id);
+        equivalentChannel.Id.Should().Be(channelDto.Id);
         equivalentChannel.Name.Should().Be(channelDto.Name);
         equivalentChannel.Description.Should().Be(channelDto.Description);
-        equivalentChannel.PrimaryAdmin.Id.Should().NotBe(channelDto.PrimaryAdmin.Id);
-        equivalentChannel.PrimaryAdmin.Name.Should().Be(channelDto.PrimaryAdmin.Name);
     }
 }

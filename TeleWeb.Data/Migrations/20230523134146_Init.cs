@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TeleWeb.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,13 +15,10 @@ namespace TeleWeb.Data.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdentityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TelegramId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Discriminator = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false)
                 },
@@ -34,13 +31,12 @@ namespace TeleWeb.Data.Migrations
                 name: "Channels",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PrimaryAdminId = table.Column<int>(type: "int", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
                     SubscribersCount = table.Column<int>(type: "int", nullable: true),
+                    PrimaryAdminId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
                     TelegramId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TelegramUsername = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -58,8 +54,8 @@ namespace TeleWeb.Data.Migrations
                 name: "ChannelAdmin",
                 columns: table => new
                 {
-                    AdminId = table.Column<int>(type: "int", nullable: false),
-                    ChannelId = table.Column<int>(type: "int", nullable: false)
+                    AdminId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ChannelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -80,12 +76,14 @@ namespace TeleWeb.Data.Migrations
                 name: "Posts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ChannelId = table.Column<int>(type: "int", nullable: false),
-                    AdminWhoPostedId = table.Column<int>(type: "int", nullable: false)
+                    likes = table.Column<int>(type: "int", nullable: false),
+                    dislikes = table.Column<int>(type: "int", nullable: false),
+                    ChannelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AdminWhoPostedId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -97,6 +95,11 @@ namespace TeleWeb.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_Posts_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Posts_Users_AdminWhoPostedId",
                         column: x => x.AdminWhoPostedId,
                         principalTable: "Users",
@@ -107,8 +110,8 @@ namespace TeleWeb.Data.Migrations
                 name: "UserChannelSubscription",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    ChannelId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ChannelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -129,10 +132,9 @@ namespace TeleWeb.Data.Migrations
                 name: "MediaFiles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PostId = table.Column<int>(type: "int", nullable: false)
+                    PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -169,6 +171,11 @@ namespace TeleWeb.Data.Migrations
                 name: "IX_Posts_ChannelId",
                 table: "Posts",
                 column: "ChannelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_PostId",
+                table: "Posts",
+                column: "PostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserChannelSubscription_ChannelId",

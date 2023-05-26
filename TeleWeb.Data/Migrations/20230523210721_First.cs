@@ -5,7 +5,7 @@
 namespace TeleWeb.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Third : Migration
+    public partial class First : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

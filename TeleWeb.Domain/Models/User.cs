@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TeleWeb.Domain.Models
 {
@@ -16,6 +17,11 @@ namespace TeleWeb.Domain.Models
         public string? TelegramId { get; set; }
 
         public ICollection<Channel>? Subscriptions { get; set; }
+        
+        public ICollection<Channel>? OwnedChannels { get; set; }
+        
+        public ICollection<Channel>? AdministratingChannels { get; set; }
+        public ICollection<Post>? Posts { get; set; }
         
     }
 }

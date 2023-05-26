@@ -1,18 +1,11 @@
 ﻿using TeleWeb.Domain.Models;
 using TeleWeb.Application.DTOs;
 using TeleWeb.Application.Services.Interfaces;
-
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Mail;
-using System.Security.Claims;
-using System.Text;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
+using TeleWeb.Data.Repositories.Interfaces;
 
 namespace TeleWeb.Application.Services
 {
@@ -21,52 +14,41 @@ namespace TeleWeb.Application.Services
         private readonly UserManager<UserIdentity> _userManager;
         private readonly SignInManager<UserIdentity> _signInManager;
         private readonly IConfiguration _configuration;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUserRepository _userRepository;
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        
-        public AccountService(SignInManager<UserIdentity> signInManager,
+        public AccountService(IUserRepository userRepository, SignInManager<UserIdentity> signInManager,
             UserManager<UserIdentity> userManager,
-            RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration,
-             IHttpContextAccessor httpContextAccessor)
+            IConfiguration configuration)
         {
-
+            _userRepository = userRepository;
             _userManager = userManager;
             _signInManager = signInManager;
-            _roleManager = roleManager;
             _configuration = configuration;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         
         public async Task<IdentityResult> RegisterUserAsync(AccountRegisterDTO model)
         {
-            if (await _userManager.FindByEmailAsync(model.Email)!=null)
-            {
-                throw new ApplicationException("You are already registered");
-            }
+            if(model.Password != model.ConfirmPassword) throw new ApplicationException("Passwords do not match.");
             var user = new UserIdentity
             {
-                UserName = model.Username,
+                UserName = model.UserName,
                 Email = model.Email,
                 EmailConfirmed = false
             };
             var result = await _userManager.CreateAsync(user, model.Password);
+            if(result.Succeeded == false) throw new ApplicationException("Error creating user."); 
             var userFromDb = await _userManager.FindByEmailAsync(model.Email);
             
             var userAsEntity = new User
             {
-
                 IdentityId = new Guid(userFromDb.Id),
                 Name = model.Name
             };
-                       
-            if (result.Succeeded)
-            {
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(userFromDb);
-                await SendEmailConfirmationAsync(userFromDb, token);
-            }
+            await _userRepository.CreateAsync(userAsEntity);
+            await _userRepository.SaveRepoChangesAsync();
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(userFromDb);
+            await SendEmailConfirmationAsync(userFromDb, token);
 
             return result;
         }
@@ -124,13 +106,14 @@ namespace TeleWeb.Application.Services
 
         public async Task ResetPasswordAsync(string userId, string token, string newPassword)
         {
-            ConfirmEmailAsync(userId, token);
+            
             var user = await _userManager.FindByIdAsync(userId);
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
             if (!result.Succeeded)
             {
                 throw new ApplicationException("Error resetting password.");
             }
+            await _userManager.ConfirmEmailAsync(user, await _userManager.GenerateEmailConfirmationTokenAsync(user));
         }
 
 
@@ -138,22 +121,19 @@ namespace TeleWeb.Application.Services
         {
             var user = await _userManager.FindByEmailAsync(model.UserNameOrEmail) 
                        ?? await _userManager.FindByNameAsync(model.UserNameOrEmail);
-
+            if (user == null) throw new ApplicationException("User not found.");
+            
             if (!user.EmailConfirmed)
                 return false;
-            if (user != null)
-            {
-                
-                var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, true, false);
+           
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, true, false);
 
-                if (result.Succeeded)
-                {
-                    
-                    
-                    await _userManager.AddToRoleAsync(user, "AuthorizedUser");
-                    return true;
-                }
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "AuthorizedUser");
+                return true;
             }
+
             return false;
         }
 

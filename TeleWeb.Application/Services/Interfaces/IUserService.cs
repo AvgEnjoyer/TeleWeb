@@ -3,10 +3,9 @@ namespace TeleWeb.Application.Services.Interfaces
 {
     public interface IUserService : IService
     {
-        public Task<UserDTO> GetByIdAsync(Guid id);
-        public Task UpdateAsync(Guid id, UserDTO user);
-        public Task<IEnumerable<UserDTO>> GetAllAsync();
-        public Task CreateAsync(UserDTO userDTO);
+        public Task<GetUserDTO> GetByIdAsync(Guid id);
+        public Task UpdateAsync(Guid id, UpdateUserDTO user);
+        public Task<IEnumerable<GetUserDTO>> GetAllAsync();
         public Task DeleteAsync(Guid id);
 
     }

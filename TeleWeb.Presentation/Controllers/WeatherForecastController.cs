@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,8 @@ namespace TeleWeb.Controllers
         [Authorize(Roles = "AuthorizedUser")]
         public IEnumerable<WeatherForecast> Get()
         {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _logger.LogInformation($"User with ID: {userId} has accessed the WeatherForecastController.");
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),

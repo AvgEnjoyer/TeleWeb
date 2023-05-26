@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TeleWeb.Application;
 using TeleWeb.Validation;
+using Microsoft.Extensions.Logging;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder => containerB
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddLogging(config=>config.AddConsole());
 builder.Services.AddCustomAutoMapper();
 
 

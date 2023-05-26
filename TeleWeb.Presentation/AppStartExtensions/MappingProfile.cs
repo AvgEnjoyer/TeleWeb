@@ -8,65 +8,41 @@ namespace TeleWeb.Presentation.AppStartExtensions
     {
         public MappingProfile()
         {
-            // UserDTO to User
-            CreateMap<UserDTO, User>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore());
+            // DTO of User
+            CreateMap<CreateUserDTO, User>();
+            CreateMap<User, CreateUserDTO>();
 
-            // User to UserDTO
-            CreateMap<User, UserDTO>();
 
-            // AdminDTO to Admin
-            CreateMap<AdminDTO, Admin>()
-                .IncludeBase<UserDTO, User>()
-                .ForMember(dest => dest.OwnedChannels, opt => opt.Ignore())
-                .ForMember(dest => dest.AdministratingChannels, opt => opt.Ignore())
-                .ForMember(dest => dest.Posts, opt => opt.Ignore());
+            CreateMap<UpdateUserDTO, User>();
+            CreateMap<User, UpdateUserDTO>();
 
-            // Admin to AdminDTO
-            CreateMap<Admin, AdminDTO>()
-                .IncludeBase<User, UserDTO>();
 
-            // PostDTO to Post
-            CreateMap<PostDTO, Post>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.Channel, opt => opt.MapFrom(src => src.Channel))
-                .ForMember(dest => dest.AdminWhoPosted, opt => opt.MapFrom(src => src.AdminWhoPosted))
-                .ForMember(dest =>dest.MediaFiles, opt=>opt.Ignore());
-
-            // Post to PostDTO
-            CreateMap<Post, PostDTO>()
-                .ForMember(dest => dest.Channel, opt => opt.MapFrom(src => src.Channel))
-                .ForMember(dest => dest.AdminWhoPosted, opt => opt.MapFrom(src => src.AdminWhoPosted));
-
-            // ChannelDTO to Channel
-            CreateMap<ChannelDTO, Channel>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.PrimaryAdmin, opt => opt.MapFrom(src => src.PrimaryAdmin))
-                .ForMember(dest => dest.Subscribers, opt => opt.Ignore())
-                .ForMember(dest => dest.Admins, opt => opt.Ignore())
-                .ForMember(dest => dest.Posts, opt => opt.Ignore());
+            CreateMap<GetUserDTO, User>();
+            CreateMap<User,GetUserDTO >();
             
-            // Channel to ChannelDTO
-            CreateMap<Channel, ChannelDTO>()
-                .ForMember(dest => dest.PrimaryAdmin, opt => opt.MapFrom(src => src.PrimaryAdmin));
+            
+            // DTO of Post
+            CreateMap<GetPostDTO, Post>();
+            CreateMap<Post, GetPostDTO>();
 
-            // TelegramChannelDTO to TelegramChannel
-            CreateMap<TelegramChannelDTO, TelegramChannel>()
-                .IncludeBase<ChannelDTO,Channel>();
+            CreateMap<UpdatePostDTO, Post>()
+                .ForMember(dest => dest.MediaFiles, opt => opt.MapFrom(src => src.MediaFileDTOs));
 
-            // TelegramChannel to TelegramChannelDTO
-            CreateMap<TelegramChannel, TelegramChannelDTO>()
-                .IncludeBase<Channel, ChannelDTO>();
+            
+            // DTO of Channel
+            CreateMap<GetChannelDTO, Channel>();
+            CreateMap<Channel, GetChannelDTO>();
 
-            //MediaFileDTO to MediaFile
-            CreateMap<MediaFileDTO, MediaFile>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.Post, opt => opt.MapFrom(src => src.Post));
 
-            //MediaFile to MediaFileDTO
-            CreateMap<MediaFile, MediaFileDTO>()
-                .ForMember(dest => dest.Post, opt => opt.MapFrom(src => src.Post));
+            // CreateMap<UpdateChannelDTO,Channel>()
+            //     .ForAllMembers(opt => opt.Condition((src, dest, srcMember, destMember) =>
+            //         srcMember != null && destMember != null));
+            CreateMap<UpdateChannelDTO, Channel>();
+            CreateMap<Channel,UpdateChannelDTO>();
 
+            //DTO of MediaFile
+            CreateMap<MediaFileDTO, MediaFile>();
+            CreateMap<MediaFile, MediaFileDTO>();
         }
     }
 }

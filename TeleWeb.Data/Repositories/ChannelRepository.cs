@@ -16,5 +16,15 @@ namespace TeleWeb.Data.Repositories
         {
             return _dbContext.Channels.Where(x => x.Id == channelId).SelectMany(x => x.Posts);
         }
+
+        public async Task CreateChannelAsync(Channel channel, User admin)
+        {
+            channel.Admins.Add(admin);
+            channel.PrimaryAdmin= admin;
+            admin.OwnedChannels.Add(channel);
+            
+            admin.Subscriptions.Add(channel);
+            await _dbContext.Channels.AddAsync(channel);
+        }
     }
 }

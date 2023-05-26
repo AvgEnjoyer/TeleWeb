@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -47,26 +48,34 @@ public class ChannelServiceTests
             new Channel { Id=id, Name = "Channel 2" },
             new Channel { Name = "Channel 3" }
         };
-        var expected = new ChannelDTO { Id = id, Name = "Channel 2" };
+        var expected = new GetChannelDTO { Id = id, Name = "Channel 2" };
         var channels = repoChannels.AsQueryable().Where(x => x.Name == "Channel 2");
        
         IQueryable<Channel> queryableChannels = repoChannels.AsQueryable();
         mockRepository.Setup(repo => repo.FindByCondition(x=>x.Id==id,false)).Returns(channels);
 
 
+        var mockUserRepository = new Mock<IUserRepository>();
+        mockUserRepository.Setup(repo => repo.FindByCondition(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<bool>()))
+            .Throws(new ArgumentException("Not expected to be called"));
+
+
+
+        
+
         var mockMapper = new Mock<IMapper>();
-
         var channel = new Channel(); // Create a non-null Channel object
-        mockMapper.Setup(mapper => mapper.Map<ChannelDTO>(It.IsAny<Channel>()))
-            .Returns((Channel ch) => new ChannelDTO { Id = ch.Id, Name = ch.Name });
-
-        var channelService = new ChannelService(mockRepository.Object, mockMapper.Object);
+        mockMapper.Setup(mapper => mapper.Map<GetChannelDTO>(It.IsAny<Channel>()))
+            .Returns((Channel ch) => new GetChannelDTO { Id = ch.Id, Name = ch.Name });
+        
+        var channelService = new ChannelService(mockRepository.Object, mockMapper.Object, mockUserRepository.Object);
         
         // Act
         var result = await channelService.GetByIdAsync(id);
         
         // Assert
         expected.Should().BeEquivalentTo(result);
+        mockRepository.Verify(repo => repo.FindByCondition(x => x.Id == id, false), Times.Exactly(1));
     }
     
 }

@@ -8,7 +8,7 @@ namespace TeleWeb.Tests.Fixtures;
 public class MappingProfileTestsFixture
 {
     public IMapper Mapper { get; }
-    private Guid g1= Guid.NewGuid(), g2= Guid.NewGuid(), g3= Guid.NewGuid(), g4= Guid.NewGuid();
+    private Guid g1 = Guid.NewGuid(), g2 = Guid.NewGuid(), g3 = Guid.NewGuid();
     public MappingProfileTestsFixture()
     {
         
@@ -28,31 +28,37 @@ public class MappingProfileTestsFixture
             Name = "John Doe",
             Description = "johndoe",
             SubscribersCount = 1221,
-            PrimaryAdmin = new Admin { Id = g3, Name = "John Doe"},
+            PrimaryAdmin = new User { Id = g3, Name = "John Doe"},
             Subscribers = new List<User>()
             //...
         };
     }
 
-    public ChannelDTO CreateExpectedChannelDTO()
+    public GetChannelDTO CreateExpectedChannelDTO()
     {
-        return new ChannelDTO()
+        return new GetChannelDTO()
         {
             Id = g1,
             Name = "John Doe",
-            Description = "johndoe",
-            PrimaryAdmin = new AdminDTO { Id = g3, Name = "John Doe"}
+            Description = "johndoe"
         };
     }
-    public ChannelDTO CreateSimilarChannelDTO()
+    public GetChannelDTO CreateSimilarChannelDTO()
     {
-        return new ChannelDTO()
+        return new GetChannelDTO()
         {
             Id = g2,
             Name = "Jane Doe",
-            Description = "johndoe2",
-            PrimaryAdmin = new AdminDTO { Id = g4, Name = "Jane Doe"}
+            Description = "johndoe2"
         };
     }
-    
+
+    public UpdateChannelDTO CreateExpectedUpdateChannelDTO()
+    {
+        return new UpdateChannelDTO
+        {
+            Name = "John Doe",
+            Description = "johndoe",
+        };
+    }
 }

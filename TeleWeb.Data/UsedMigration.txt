@@ -3,4 +3,4 @@
 Update database:
     dotnet ef database update --project TeleWeb.Data --startup-project TeleWeb.Presentation --context TeleWebDbContext
 Remove:
-    dotnet ef migrations remove --project TeleWeb.Data --startup-project TeleWeb.Presentation
+    dotnet ef migrations remove --project TeleWeb.Data --startup-project TeleWeb.Presentation --context TeleWebDbContext

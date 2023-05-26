@@ -1,12 +1,10 @@
+using Microsoft.AspNetCore.Http;
 using TeleWeb.Application.DTOs;
 
 namespace TeleWeb.Application.Services.Interfaces;
 
-public interface IPostService
+public interface IPostService : IService
 {
-    public Task<IEnumerable<PostDTO>> GetAllFromChannelAsync(Guid channelId);
-    public Task<PostDTO> GetByIdAsync(Guid id);
-    public Task CreateAsync(PostDTO postDTO, Guid channelId);
-    public Task UpdateAsync(Guid id, PostDTO postDTO);
-    public Task DeleteAsync(Guid id);
+    public Task CreatePostAsync(UpdatePostDTO postDTO, Guid channelId, string userId);
+    public Task DeletePostAsync(Guid postId, string userId);
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeleWeb.Data;
 
@@ -11,9 +12,11 @@ using TeleWeb.Data;
 namespace TeleWeb.Data.Migrations
 {
     [DbContext(typeof(TeleWebDbContext))]
-    partial class TeleWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230523210721_First")]
+    partial class First
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace TeleWeb.Data.Migrations
 
                     b.HasIndex("ChannelId");
 
-                    b.ToTable("ChannelAdmin", (string)null);
+                    b.ToTable("ChannelAdmin");
                 });
 
             modelBuilder.Entity("TeleWeb.Domain.Models.Channel", b =>
@@ -58,14 +61,14 @@ namespace TeleWeb.Data.Migrations
                     b.Property<Guid>("PrimaryAdminId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("SubscribersCount")
+                    b.Property<int?>("SubscribersCount")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PrimaryAdminId");
 
-                    b.ToTable("Channels", (string)null);
+                    b.ToTable("Channels");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Channel");
 
@@ -81,10 +84,6 @@ namespace TeleWeb.Data.Migrations
                     b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -93,7 +92,7 @@ namespace TeleWeb.Data.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("MediaFiles", (string)null);
+                    b.ToTable("MediaFiles");
                 });
 
             modelBuilder.Entity("TeleWeb.Domain.Models.Post", b =>
@@ -131,7 +130,7 @@ namespace TeleWeb.Data.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("TeleWeb.Domain.Models.User", b =>
@@ -142,6 +141,11 @@ namespace TeleWeb.Data.Migrations
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<Guid>("IdentityId")
                         .HasColumnType("uniqueidentifier");
@@ -155,7 +159,11 @@ namespace TeleWeb.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("UserChannelSubscription", b =>
@@ -170,7 +178,7 @@ namespace TeleWeb.Data.Migrations
 
                     b.HasIndex("ChannelId");
 
-                    b.ToTable("UserChannelSubscription", (string)null);
+                    b.ToTable("UserChannelSubscription");
                 });
 
             modelBuilder.Entity("TeleWeb.Domain.Models.TelegramChannel", b =>
@@ -188,24 +196,31 @@ namespace TeleWeb.Data.Migrations
                     b.HasDiscriminator().HasValue("TelegramChannel");
                 });
 
+            modelBuilder.Entity("TeleWeb.Domain.Models.Admin", b =>
+                {
+                    b.HasBaseType("TeleWeb.Domain.Models.User");
+
+                    b.HasDiscriminator().HasValue("Admin");
+                });
+
             modelBuilder.Entity("ChannelAdmin", b =>
                 {
-                    b.HasOne("TeleWeb.Domain.Models.User", null)
+                    b.HasOne("TeleWeb.Domain.Models.Admin", null)
                         .WithMany()
                         .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("TeleWeb.Domain.Models.Channel", null)
                         .WithMany()
                         .HasForeignKey("ChannelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("TeleWeb.Domain.Models.Channel", b =>
                 {
-                    b.HasOne("TeleWeb.Domain.Models.User", "PrimaryAdmin")
+                    b.HasOne("TeleWeb.Domain.Models.Admin", "PrimaryAdmin")
                         .WithMany("OwnedChannels")
                         .HasForeignKey("PrimaryAdminId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -227,7 +242,7 @@ namespace TeleWeb.Data.Migrations
 
             modelBuilder.Entity("TeleWeb.Domain.Models.Post", b =>
                 {
-                    b.HasOne("TeleWeb.Domain.Models.User", "AdminWhoPosted")
+                    b.HasOne("TeleWeb.Domain.Models.Admin", "AdminWhoPosted")
                         .WithMany("Posts")
                         .HasForeignKey("AdminWhoPostedId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -253,13 +268,13 @@ namespace TeleWeb.Data.Migrations
                     b.HasOne("TeleWeb.Domain.Models.Channel", null)
                         .WithMany()
                         .HasForeignKey("ChannelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("TeleWeb.Domain.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -275,7 +290,7 @@ namespace TeleWeb.Data.Migrations
                     b.Navigation("MediaFiles");
                 });
 
-            modelBuilder.Entity("TeleWeb.Domain.Models.User", b =>
+            modelBuilder.Entity("TeleWeb.Domain.Models.Admin", b =>
                 {
                     b.Navigation("OwnedChannels");
 

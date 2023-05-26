@@ -16,7 +16,7 @@ namespace TeleWeb.Domain.Models
         [Required]
         public Channel Channel { get; set; } = new ();
         [Required]
-        public Admin AdminWhoPosted { get; set; } = new ();
+        public User AdminWhoPosted { get; set; } = new ();
         
         public ICollection<MediaFile>? MediaFiles { get; set; }
 

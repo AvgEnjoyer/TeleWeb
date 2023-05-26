@@ -2,6 +2,7 @@
 using TeleWeb.Application.DTOs;
 using TeleWeb.Application.Services.Interfaces;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TeleWeb.Data.Repositories.Interfaces;
 
 
@@ -19,16 +20,16 @@ namespace TeleWeb.Application.Services
             _autoMapper = mapper;
         }
 
-        public async Task<UserDTO> GetByIdAsync(Guid id)
+        public async Task<GetUserDTO> GetByIdAsync(Guid id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            var userDTO = _autoMapper.Map<UserDTO>(user);
+            var user = await _userRepository.FindByCondition(x=>x.Id==id, false).FirstOrDefaultAsync();
+            var userDTO = _autoMapper.Map<GetUserDTO>(user);
             return userDTO;
         }
         
-        public async Task UpdateAsync(Guid id, UserDTO userDTO)
+        public async Task UpdateAsync(Guid id, UpdateUserDTO userDTO)
         {
-            var user = await _userRepository.GetByIdAsync(id);
+            var user = await _userRepository.FindByCondition(x=>x.Id==id, true).FirstOrDefaultAsync();
             if (user == null)
             {
                 throw new ArgumentException($"User with id {id} not found");
@@ -40,22 +41,18 @@ namespace TeleWeb.Application.Services
             
         }
 
-        public async Task<IEnumerable<UserDTO>> GetAllAsync()
+        public async Task<IEnumerable<GetUserDTO>> GetAllAsync()
         {
-            var users = await _userRepository.GetAllAsync();
-            return _autoMapper.Map<ICollection<UserDTO>>(users);
+            var users = await _userRepository.FindAll(false).ToListAsync();
+            return _autoMapper.Map<IEnumerable<GetUserDTO>>(users);
         }
         
-        public async Task CreateAsync(UserDTO userDTO)
-        {
-            var user = _autoMapper.Map<User>(userDTO);
-            await _userRepository.CreateAsync(user);
-            await _userRepository.SaveRepoChangesAsync();
-        }
 
         public async Task DeleteAsync(Guid id)
         {
-            await _userRepository.DeleteAsync(id);
+            var user = await _userRepository.FindByCondition(x=>x.Id==id, true).FirstOrDefaultAsync();
+            await _userRepository.DeleteAsync(user);
+            await _userRepository.SaveRepoChangesAsync();
         }
         
     }

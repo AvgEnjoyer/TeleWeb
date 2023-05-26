@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using TeleWeb.Application.DTOs;
 using TeleWeb.Application.Services.Interfaces;
@@ -12,15 +14,15 @@ namespace TeleWeb.Presentation.Controllers;
 public class ChannelController : ControllerBase
 {
     private readonly IChannelService _channelService;
-    private readonly IValidator<ChannelDTO> _channelValidator;
+    private readonly IValidator<GetChannelDTO> _channelValidator;
 
-    public ChannelController(IChannelService channelService, IValidator<ChannelDTO> channelValidator)
+    public ChannelController(IChannelService channelService, IValidator<GetChannelDTO> channelValidator)
     {
         _channelService = channelService;
         _channelValidator = channelValidator;
     }
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ChannelDTO>>> GetAllChannels()
+    public async Task<ActionResult<IEnumerable<GetChannelDTO>>> GetAllChannels()//TODO
     {
         try
         {
@@ -34,7 +36,7 @@ public class ChannelController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<IEnumerable<ChannelDTO>>> GetChannelById(Guid id)
+    public async Task<ActionResult<IEnumerable<GetChannelDTO>>> GetChannelById(Guid id) //TODO
     {
         try
         {
@@ -48,14 +50,51 @@ public class ChannelController : ControllerBase
     }
     [HttpPost]
     [Authorize(Roles = "AuthorizedUser")]
-    public async Task<ActionResult> CreateChannel(ChannelDTO channelDTO)
+    public async Task<ActionResult> CreateChannel([FromBody]UpdateChannelDTO channelDTO)
     {
-        var validationResult = await _channelValidator.ValidateAsync(channelDTO);
-        if(!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+        // var validationResult = await _channelValidator.ValidateAsync(channelDTO);
+        // if(!validationResult.IsValid)
+        //     return BadRequest(validationResult.Errors);
         try
         {
-            await _channelService.CreateAsync(channelDTO);
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _channelService.CreateAsync(channelDTO, userId);
+            return Ok();
+        }
+        catch (Exception exception)
+        {
+            return ExceptionResult(exception);
+        }
+    }
+    [HttpPost("post")]
+    [Authorize(Roles = "AuthorizedUser")]
+    public async Task<ActionResult> CreatePost([FromBody] UpdatePostDTO postDTO, Guid channelId)
+    {
+        /*var validationResult = await _channelValidator.ValidateAsync(channelDTO);
+        if(!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);*/
+        try
+        {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _channelService.CreatePostAsync(postDTO, channelId, userId);
+            return Ok();
+        }
+        catch (Exception exception)
+        {
+            return ExceptionResult(exception);
+        }
+    }
+    [HttpDelete("post/{postId}")]
+    [Authorize(Roles = "AuthorizedUser")]
+    public async Task<ActionResult> DeletePost( Guid postId)
+    {
+        /*var validationResult = await _channelValidator.ValidateAsync(channelDTO);
+        if(!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);*/
+        try
+        {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _channelService.DeletePostAsync(postId, userId);
             return Ok();
         }
         catch (Exception exception)
@@ -64,11 +103,12 @@ public class ChannelController : ControllerBase
         }
     }
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateChannel(Guid id, ChannelDTO channelDTO)
+    public async Task<ActionResult> UpdateChannel(Guid id, UpdateChannelDTO channelDTO) //TODO
     {
         try
         {
-            await _channelService.UpdateAsync(id, channelDTO);
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _channelService.UpdateAsync(id, channelDTO, userId);
             return Ok();
         }
         catch (Exception exception)
@@ -76,13 +116,29 @@ public class ChannelController : ControllerBase
             return ExceptionResult(exception);
         }
     }
+    [HttpPost("subscribe")]
+    [Authorize(Roles = "AuthorizedUser")]
+    public async Task<ActionResult> SubscribeToChannel(Guid channelId) 
+    {
+        try
+        {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _channelService.SubscribeAsync(channelId, userId);
+            return Ok();
+        }
+        catch (Exception exception)
+        {
+            return ExceptionResult(exception);
+        }
+    } 
 
     [HttpDelete("{id}")] 
     public async Task<ActionResult> DeleteChannel(Guid id)
     {
         try
         {
-            await _channelService.DeleteAsync(id);
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _channelService.DeleteAsync(id, userId);
             return Ok();
         }
         catch (Exception exception)

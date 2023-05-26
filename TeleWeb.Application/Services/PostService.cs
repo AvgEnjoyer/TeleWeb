@@ -1,66 +1,42 @@
-﻿using TeleWeb.Domain.Models;
+﻿using System.Security.Claims;
+using TeleWeb.Domain.Models;
 using TeleWeb.Application.DTOs;
 using TeleWeb.Application.Services.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using TeleWeb.Data.Repositories.Interfaces;
 
-namespace TeleWeb.Application.Services
+namespace TeleWeb.Application.Services;
+
+public class PostService : ChannelService, IPostService
 {
-    public class PostService : IPostService
+    private readonly IMapper _mapper;
+    private readonly IPostRepository _postRepository;
+
+    public PostService(IPostRepository postRepository, IChannelRepository channelRepository, IMapper mapper, IUserRepository userRepository) 
+        : base(channelRepository, mapper, userRepository)
     {
-        private readonly IPostRepository _postRepository;
-        private readonly IChannelRepository _channelRepository;
-        private readonly IMapper _mapper;
-
-        public PostService(IPostRepository postRepository, IChannelRepository channelRepository, IMapper mapper)
-        {
-            _postRepository = postRepository;
-            _channelRepository = channelRepository;
-            _mapper = mapper;
-        }
-
-        public async Task CreateAsync(PostDTO postDto, Guid channelId)
-        {
-            var channel = await _channelRepository.FindByCondition(x => x.Id == channelId, true).FirstOrDefaultAsync();
-            if (channel == null)
-            {
-                throw new ArgumentException("Invalid channel Id.");
-            }
-            var post = _mapper.Map<Post>(postDto);
-            post.Channel = channel;
-            await _postRepository.CreateAsync(post);
-            await _postRepository.SaveRepoChangesAsync();
-        }
-
-
-        public async Task DeleteAsync(Guid id)
-        {
-            var post = await _postRepository.FindByCondition(x => x.Id == id, true).FirstOrDefaultAsync();
-            if(post!=null)
-                await _postRepository.DeleteAsync(post);
-        }
-
-        public async Task<IEnumerable<PostDTO>> GetAllFromChannelAsync(Guid channelId)
-        {
-            var posts = await _channelRepository.FindPostsByChannelId(channelId).ToListAsync();
-            return _mapper.Map<IEnumerable<PostDTO>>(posts);
-        }
-
-
-        public async Task<PostDTO> GetByIdAsync(Guid id)
-        {
-            var post = await _postRepository.FindByCondition(x => x.Id == id, false)
-                .FirstOrDefaultAsync();
-            return _mapper.Map<PostDTO>(post);
-        }
-
-        public async Task UpdateAsync(Guid id, PostDTO postDto)
-        {
-            var postToUpdate = await _postRepository.FindByCondition(x=>x.Id==id, true).FirstOrDefaultAsync();
-            if (postToUpdate == null) throw new Exception();
-            _mapper.Map(postDto, postToUpdate);
-            await _postRepository.UpdateAsync(postToUpdate);
-        }
+        _mapper = mapper;
+        _postRepository = postRepository;
+    }
+    public async Task CreatePostAsync(UpdatePostDTO postDTO, Guid channelId, string userId)
+    {
+        var channel = await VerifyAdmin(channelId, userId);
+        var whoPosted = channel.Admins.FirstOrDefault(x => x.IdentityId.ToString() == userId);
+        var post = _mapper.Map<Post>(postDTO);
+        await _postRepository.CreateAsync(post, channel, whoPosted);
+        await _postRepository.SaveRepoChangesAsync();
+    }
+    
+    public async Task DeletePostAsync(Guid postId, string userId)
+    {
+        var post = await _postRepository.FindByCondition(x=>x.Id==postId, true)
+            .Include(x=>x.Channel).FirstOrDefaultAsync();
+        if (post == null) throw new ArgumentException("Invalid post Id.");
+        if (post.Channel==null) throw new ArgumentException("Unexpected behaviour. Invalid channel of the post.");
+        var _  = await VerifyAdmin(post.Channel.Id, userId);
+        await _postRepository.DeleteAsync(post);
     }
 }

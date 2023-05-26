@@ -4,19 +4,15 @@ namespace TeleWeb.Domain.Models
 {
     public class MediaFile
     {
-        public enum FileType
-        {
-            Image,
-            Video,
-            Audio,
-            Document
-        }
         [Key]
         public Guid Id { get; private set; }
         [Required]
         public string Url { get; set; } = string.Empty;
         [Required]
-        public FileType Type { get; }
+        
+        [RegularExpression("^(?i)(Image|Video|Audio|Document)$")]
+        public string Type { get; set; }
+
         [Required]
         public Post Post { get; set; } = new ();
     }

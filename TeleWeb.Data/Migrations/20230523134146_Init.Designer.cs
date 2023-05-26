@@ -12,8 +12,8 @@ using TeleWeb.Data;
 namespace TeleWeb.Data.Migrations
 {
     [DbContext(typeof(TeleWebDbContext))]
-    [Migration("20230523130924_Fifth")]
-    partial class Fifth
+    [Migration("20230523134146_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

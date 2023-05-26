@@ -5,24 +5,25 @@
 namespace TeleWeb.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class First : Migration
+    public partial class _6_file_type : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "PhoneNumber",
-                table: "Users",
+                name: "Type",
+                table: "MediaFiles",
                 type: "nvarchar(max)",
-                nullable: true);
+                nullable: false,
+                defaultValue: "");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "PhoneNumber",
-                table: "Users");
+                name: "Type",
+                table: "MediaFiles");
         }
     }
 }

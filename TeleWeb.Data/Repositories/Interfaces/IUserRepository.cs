@@ -3,12 +3,8 @@ using TeleWeb.Domain.Models;
 
 namespace TeleWeb.Data.Repositories.Interfaces
 {
-    public interface IUserRepository : IRepository
+    public interface IUserRepository : IRepositoryBase<User>
     {
-        Task<User> GetByIdAsync(Guid id);
-        Task<ICollection<User>> GetAllAsync();
-        Task CreateAsync(User user);
-        Task UpdateAsync(User user);
-        Task DeleteAsync(Guid id);
+        
     }
 }

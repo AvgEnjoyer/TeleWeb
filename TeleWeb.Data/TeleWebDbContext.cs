@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TeleWeb.Domain.Models;
 
 namespace TeleWeb.Data
@@ -6,6 +7,7 @@ namespace TeleWeb.Data
     public class TeleWebDbContext: DbContext
     {
         public DbSet<User> Users { get; set; }
+
         public DbSet<Post> Posts { get; set; }
         public DbSet<Channel> Channels { get; set; }
         public DbSet<MediaFile> MediaFiles { get; set; }
@@ -38,25 +40,24 @@ namespace TeleWeb.Data
                 .HasMany(u => u.Subscriptions)
                 .WithMany(c => c.Subscribers)
                 .UsingEntity<Dictionary<string, object>>(
-                  "UserChannelSubscription",
-                j => j
-                .HasOne<Channel>()
-                .WithMany()
-                .HasForeignKey("ChannelId").OnDelete(DeleteBehavior.NoAction),
-                j => j
-                .HasOne<User>()
-                .WithMany()
-                .HasForeignKey("UserId").OnDelete(DeleteBehavior.NoAction),
-                j => j
-                .HasKey("UserId", "ChannelId"));
-          
+                    "UserChannelSubscription",
+                    j => j
+                        .HasOne<Channel>()
+                        .WithMany()
+                        .HasForeignKey("ChannelId"),
+                    j => j
+                        .HasOne<User>()
+                        .WithMany()
+                        .HasForeignKey("UserId"),
+                    j => j
+                        .HasKey("UserId", "ChannelId"));
             //Admin 
-            modelBuilder.Entity<Admin>()
+            modelBuilder.Entity<User>()
                 .HasMany(u => u.Posts)
                 .WithOne(p => p.AdminWhoPosted)
                 .OnDelete(DeleteBehavior.NoAction);
             
-            modelBuilder.Entity<Admin>()
+            modelBuilder.Entity<User>()
                 .HasMany(a=>a.OwnedChannels)
                 .WithOne(p => p.PrimaryAdmin)
                 .OnDelete(DeleteBehavior.NoAction);
@@ -66,24 +67,29 @@ namespace TeleWeb.Data
                 .HasMany(c => c.Posts)
                 .WithOne(p => p.Channel)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
+            // modelBuilder.Entity<Channel>()
+            //     .HasOne<User>(c => c.PrimaryAdmin)
+            //     .WithMany(u => u.OwnedChannels).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Channel>()
                 .HasMany(c => c.Admins)
                 .WithMany(a => a.AdministratingChannels)
                 .UsingEntity<Dictionary<string, object>>(
-                  "ChannelAdmin",
-                j => j
-                .HasOne<Admin>()
-                .WithMany()
-                .HasForeignKey("AdminId").OnDelete(DeleteBehavior.NoAction),
-                j => j
-                .HasOne<Channel>()
-                .WithMany()
-                .HasForeignKey("ChannelId").OnDelete(DeleteBehavior.NoAction)
-                ,
-                j => j
-                .HasKey("AdminId", "ChannelId"));
-           
+                    "ChannelAdmin",
+                    j => j
+                        .HasOne<User>()
+                        .WithMany()
+                        .HasForeignKey("AdminId"),
+                    j => j
+                        .HasOne<Channel>()
+                        .WithMany()
+                        .HasForeignKey("ChannelId"),
+                    j => j
+                        .HasKey("AdminId", "ChannelId")
+                );
+            
+
+
             //TG Channel
             modelBuilder.Entity<TelegramChannel>()
                 .HasBaseType<Channel>();
@@ -98,6 +104,7 @@ namespace TeleWeb.Data
             modelBuilder.Entity<User>().Property(u => u.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Channel>().Property(u => u.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Post>().Property(u => u.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Post>().Property(u=>u.Date).ValueGeneratedOnAdd();
             modelBuilder.Entity<MediaFile>().Property(u => u.Id).ValueGeneratedOnAdd();
 
         }

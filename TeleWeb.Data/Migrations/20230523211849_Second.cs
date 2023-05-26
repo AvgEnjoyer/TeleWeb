@@ -10,19 +10,21 @@ namespace TeleWeb.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "Username",
-                table: "Users",
-                newName: "UserName");
+            migrationBuilder.DropColumn(
+                name: "Discriminator",
+                table: "Users");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "UserName",
+            migrationBuilder.AddColumn<string>(
+                name: "Discriminator",
                 table: "Users",
-                newName: "Username");
+                type: "nvarchar(5)",
+                maxLength: 5,
+                nullable: false,
+                defaultValue: "");
         }
     }
 }

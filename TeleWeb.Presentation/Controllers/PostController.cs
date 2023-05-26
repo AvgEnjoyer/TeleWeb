@@ -1,58 +1,35 @@
+using System.Security.Claims;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeleWeb.Application.DTOs;
 using TeleWeb.Application.Services.Interfaces;
 
 namespace TeleWeb.Presentation.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/Channel/")]
 [ApiController]
 public class PostController : ControllerBase
 {
     private readonly IPostService _postService;
-    private readonly IValidator<PostDTO> _postValidator;
+    private readonly IValidator<UpdatePostDTO> _postValidator;
 
-    public PostController(IPostService postService, IValidator<PostDTO> postValidator)
+    public PostController(IPostService postService, IValidator<UpdatePostDTO> postValidator)
     {
         _postService = postService;
         _postValidator = postValidator;
     }
-    [HttpGet("{channelId}")]
-    public async Task<ActionResult<IEnumerable<PostDTO>>> GetAllPostsFromChannel(Guid channelId)
+    [HttpPost("{channelId}/post/")]
+    [Authorize(Roles = "AuthorizedUser")]
+    public async Task<ActionResult> CreatePost([FromBody] UpdatePostDTO postDTO, Guid channelId)
     {
-        try
-        {
-            var postDTOs = await _postService.GetAllFromChannelAsync(channelId);
-            return Ok(postDTOs);
-        }
-        catch (Exception exception)
-        {
-            return ExceptionResult(exception);
-        }
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<IEnumerable<PostDTO>>> GetPostById(Guid id)
-    {
-        try
-        {
-            var postDTO = await _postService.GetByIdAsync(id);
-            return Ok(postDTO);
-        }
-        catch (Exception exception)
-        {
-            return ExceptionResult(exception);
-        }
-    }
-    [HttpPost]
-    public async Task<ActionResult> CreatePost(PostDTO postDTO, Guid channelID)
-    {
-        var validationResult = await _postValidator.ValidateAsync(postDTO);
+        /*var validationResult = await _channelValidator.ValidateAsync(channelDTO);
         if(!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(validationResult.Errors);*/
         try
         {
-            await _postService.CreateAsync(postDTO, channelID);
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _postService.CreatePostAsync(postDTO, channelId, userId);
             return Ok();
         }
         catch (Exception exception)
@@ -60,12 +37,15 @@ public class PostController : ControllerBase
             return ExceptionResult(exception);
         }
     }
-    [HttpPut("{id}")]
-    public async Task<ActionResult> UpdatePost(Guid id, PostDTO postDTO)
+    [HttpPut("/api/Post/{postId}")]
+    [Authorize(Roles = "AuthorizedUser")]
+    public async Task<ActionResult> UpdatePost( [FromBody]UpdatePostDTO postDTO, Guid postId)
     {
+        
         try
         {
-            await _postService.UpdateAsync(id, postDTO);
+            //var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //await _postService.UpdatePostAsync(postDTO, postId, userId);
             return Ok();
         }
         catch (Exception exception)
@@ -73,13 +53,31 @@ public class PostController : ControllerBase
             return ExceptionResult(exception);
         }
     }
-
-    [HttpDelete("{id}")] 
-    public async Task<ActionResult> DeletePost(Guid id)
+    
+    [HttpDelete("/api/Post/{postId}")]
+    [Authorize(Roles = "AuthorizedUser")]
+    public async Task<ActionResult> DeletePost( Guid postId)
+    {
+        /*var validationResult = await _channelValidator.ValidateAsync(channelDTO);
+        if(!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);*/
+        try
+        {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _postService.DeletePostAsync(postId, userId);
+            return Ok();
+        }
+        catch (Exception exception)
+        {
+            return ExceptionResult(exception);
+        }
+    }
+    [HttpGet("{channelId}/post/")]
+    public async Task<ActionResult<IEnumerable<GetPostDTO>>> GetPostsByChannel(Guid channnelId)
     {
         try
         {
-            await _postService.DeleteAsync(id);
+            //var postDTO = await _postService.GetPostsByChannelAsync(channnelId);
             return Ok();
         }
         catch (Exception exception)

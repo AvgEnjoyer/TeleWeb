@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace TeleWeb.Application.DTOs
 {
-    public class UserDTO
-    {
-        public Guid Id { get; init; }
-        public string Name { get; set; } = string.Empty;
-        public string UserName { get; set; } = string.Empty;
+    public class GetUserDTO
+    {   
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string UserName { get; set; } 
         public DateTime DateOfBirth { get; set; }
         public string? PhoneNumber { get; set; }
-        //public string? TelegramId { get; set; }
+        
     }
 }

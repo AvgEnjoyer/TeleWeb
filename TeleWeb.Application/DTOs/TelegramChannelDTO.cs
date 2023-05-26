@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TeleWeb.Application.DTOs
 {
-    public class TelegramChannelDTO : ChannelDTO
+    public class TelegramChannelDTO
     {
         public int? SubscribersCount { get; set; }
         public string TelegramId { get; set; } = String.Empty;

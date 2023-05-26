@@ -7,7 +7,7 @@ using TeleWeb.Application.Services.Interfaces;
 namespace TeleWeb.Presentation.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
 
