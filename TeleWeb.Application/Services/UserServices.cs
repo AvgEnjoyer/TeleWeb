@@ -20,40 +20,16 @@ namespace TeleWeb.Application.Services
             _autoMapper = mapper;
         }
 
-        public async Task<GetUserDTO> GetByIdAsync(Guid id)
+
+        public async Task<IEnumerable<GetChannelDTO>> GetUserSubscriptionsByIdentityAsync(string identityId)
         {
-            var user = await _userRepository.FindByCondition(x=>x.Id==id, false).FirstOrDefaultAsync();
-            var userDTO = _autoMapper.Map<GetUserDTO>(user);
-            return userDTO;
-        }
-        
-        public async Task UpdateAsync(Guid id, UpdateUserDTO userDTO)
-        {
-            var user = await _userRepository.FindByCondition(x=>x.Id==id, true).FirstOrDefaultAsync();
+            var user = await _userRepository.FindByCondition(x=>x.IdentityId.ToString()==identityId, false)
+                .Include(x=>x.Subscriptions)
+                .FirstOrDefaultAsync();
             if (user == null)
-            {
-                throw new ArgumentException($"User with id {id} not found");
-            }
-
-            _autoMapper.Map(userDTO, user);
-            //await _userRepository.UpdateAsync(user);
-            await _userRepository.SaveRepoChangesAsync();
-            
+                throw new Exception("Unexpected behaviour. User not found");
+            var subscriptions = _autoMapper.Map<IEnumerable<GetChannelDTO>>(user.Subscriptions);
+            return subscriptions;
         }
-
-        public async Task<IEnumerable<GetUserDTO>> GetAllAsync()
-        {
-            var users = await _userRepository.FindAll(false).ToListAsync();
-            return _autoMapper.Map<IEnumerable<GetUserDTO>>(users);
-        }
-        
-
-        public async Task DeleteAsync(Guid id)
-        {
-            var user = await _userRepository.FindByCondition(x=>x.Id==id, true).FirstOrDefaultAsync();
-            await _userRepository.DeleteAsync(user);
-            await _userRepository.SaveRepoChangesAsync();
-        }
-        
     }
 }

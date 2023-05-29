@@ -21,13 +21,14 @@ public class PostService : ChannelService, IPostService
         _mapper = mapper;
         _postRepository = postRepository;
     }
-    public async Task CreatePostAsync(UpdatePostDTO postDTO, Guid channelId, string userId)
+    public async Task<GetPostDTO> CreatePostAsync(UpdatePostDTO postDTO, Guid channelId, string userId)
     {
         var channel = await VerifyAdmin(channelId, userId);
         var whoPosted = channel.Admins.FirstOrDefault(x => x.IdentityId.ToString() == userId);
         var post = _mapper.Map<Post>(postDTO);
         await _postRepository.CreateAsync(post, channel, whoPosted);
         await _postRepository.SaveRepoChangesAsync();
+        return _mapper.Map<GetPostDTO>(post);
     }
     
     public async Task DeletePostAsync(Guid postId, string userId)

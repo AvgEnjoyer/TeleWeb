@@ -8,7 +8,7 @@ using TeleWeb.Data.Repositories.Interfaces;
 
 namespace TeleWeb.Application.Services;
 
-public class ChannelService 
+public class ChannelService : IChannelService
 {
     private readonly IChannelRepository _channelRepository;
     private readonly IMapper _mapper;
@@ -21,6 +21,7 @@ public class ChannelService
         _channelRepository = channelRepository;
         _mapper = mapper;
     }
+    
 
     protected async Task<Channel> VerifyAdmin(Guid channelId, string userId)
     {
@@ -35,8 +36,11 @@ public class ChannelService
             throw new ArgumentException("You are not admin of this channel.");
         return channel;
     }
-
-    public async Task CreateAsync(UpdateChannelDTO channelDto, string userId)
+    public async Task IsAdminAsync(Guid channelId, string userId)
+    {
+        var _ = VerifyAdmin(channelId, userId);
+    }
+    public async Task<GetChannelDTO> CreateAsync(UpdateChannelDTO channelDto, string userId)
     {
         var adminUser = await _userRepository.FindByCondition(x => x.IdentityId == new Guid(userId), true)
             .Include(x => x.AdministratingChannels)
@@ -46,6 +50,7 @@ public class ChannelService
         var channel = _mapper.Map<Channel>(channelDto);
         await _channelRepository.CreateChannelAsync(channel, adminUser);
         await _channelRepository.SaveRepoChangesAsync();
+        return _mapper.Map<GetChannelDTO>(channel);
     }
 
     

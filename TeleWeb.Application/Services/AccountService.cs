@@ -37,7 +37,11 @@ namespace TeleWeb.Application.Services
                 EmailConfirmed = false
             };
             var result = await _userManager.CreateAsync(user, model.Password);
-            if(result.Succeeded == false) throw new ApplicationException("Error creating user."); 
+            if (!result.Succeeded)
+            {
+                var errorMessages = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new ApplicationException($"Error creating user. Errors: {errorMessages}");
+            } 
             var userFromDb = await _userManager.FindByEmailAsync(model.Email);
             
             var userAsEntity = new User
@@ -53,12 +57,26 @@ namespace TeleWeb.Application.Services
             return result;
         }
 
-        private async Task SendEmailConfirmationAsync(UserIdentity user, string token)
+        private async Task SendResetEmail(UserIdentity user, string token)
         {
+            var clientUrlForReset = _configuration["ClientUrl:ForReset"];
             
             // Build the email confirmation link
-            var callbackUrl = $"https://localhost:44343/api/account/confirm?userId={user.Id}&token={(token)}";
+            var callbackUrl = $"{clientUrlForReset}?userId={user.Id}&token={(token)}";
+            await SendEmailAsync(user, token, callbackUrl);
+        }
 
+        private async Task SendEmailConfirmationAsync(UserIdentity user, string token)
+        {
+            var clientUrlForEmailConfirmation = _configuration["ClientUrl:ForEmailConfirmation"];
+
+            // Build the email confirmation link
+            var callbackUrl = $"{clientUrlForEmailConfirmation}?userId={user.Id}&token={(token)}";
+            await SendEmailAsync(user, token, callbackUrl);
+        }
+
+        private async Task SendEmailAsync(UserIdentity user, string token, string callbackUrl)
+        {
             // Create an instance of the SmtpClient
             using var smtpClient = new SmtpClient(_configuration["EmailSettings:Host"],
                 int.Parse(_configuration["EmailSettings:Port"]));
@@ -79,18 +97,22 @@ namespace TeleWeb.Application.Services
             await smtpClient.SendMailAsync(mailMessage);
         }
 
-        public async Task ConfirmEmailAsync(string userId, string token)
+        public async Task ConfirmEmailAsync(string userId, string tokenWithoutPluses)
         {
-            var user = _userManager.FindByIdAsync(userId);
+            string token = tokenWithoutPluses.Contains(' ')? 
+                tokenWithoutPluses.Replace(' ', '+')
+                : tokenWithoutPluses;
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 throw new ApplicationException("User not found.");
             }
-            var result = await _userManager.ConfirmEmailAsync(user.Result, token);
+            var result = await _userManager.ConfirmEmailAsync(user, token);
             if (!result.Succeeded)
             {
-                throw new ApplicationException("Error confirming email.");
-            }
+                var errorMessages = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new ApplicationException($"Error confirming email. Errors: {errorMessages}");
+            } 
         }
 
         public async Task ForgotPasswordAsync(string email)
@@ -101,40 +123,49 @@ namespace TeleWeb.Application.Services
                 throw new ApplicationException("User not found.");
             }
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            await SendEmailConfirmationAsync(user, token);
+            await SendResetEmail(user, token);
         }
 
-        public async Task ResetPasswordAsync(string userId, string token, string newPassword)
+        
+
+        public async Task ResetPasswordAsync(string userId, string tokenWithoutPluses, string newPassword)
         {
-            
+            string token = tokenWithoutPluses.Contains(' ')? 
+                tokenWithoutPluses.Replace(' ', '+')
+                : tokenWithoutPluses;
             var user = await _userManager.FindByIdAsync(userId);
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
             if (!result.Succeeded)
             {
-                throw new ApplicationException("Error resetting password.");
-            }
+                var errorMessages = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new ApplicationException($"Error resetting password. Errors: {errorMessages}");
+            } 
             await _userManager.ConfirmEmailAsync(user, await _userManager.GenerateEmailConfirmationTokenAsync(user));
+            var signInResult = await _signInManager.PasswordSignInAsync(user, newPassword, true, false);
+            if (signInResult.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "AuthorizedUser");
+                
+            }
         }
 
 
-        public async Task<bool> LoginUserAsync(AccountLoginDTO model)
+        public async Task LoginUserAsync(AccountLoginDTO model)
         {
             var user = await _userManager.FindByEmailAsync(model.UserNameOrEmail) 
                        ?? await _userManager.FindByNameAsync(model.UserNameOrEmail);
             if (user == null) throw new ApplicationException("User not found.");
             
             if (!user.EmailConfirmed)
-                return false;
+                throw new ApplicationException("You must confirm your email before logging in.");
            
             var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, true, false);
 
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, "AuthorizedUser");
-                return true;
+                
             }
-
-            return false;
         }
 
         

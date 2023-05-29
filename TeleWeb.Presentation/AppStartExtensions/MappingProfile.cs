@@ -9,8 +9,6 @@ namespace TeleWeb.Presentation.AppStartExtensions
         public MappingProfile()
         {
             // DTO of User
-            CreateMap<CreateUserDTO, User>();
-            CreateMap<User, CreateUserDTO>();
 
 
             CreateMap<UpdateUserDTO, User>();

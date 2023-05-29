@@ -9,19 +9,26 @@ namespace TeleWeb.Presentation.Controllers
     {
         protected ActionResult ExceptionResult(Exception exception)
         {
+            var response = new ApiResponse()
+            {
+                Success = false
+            };
             if (exception is DbException dbException)
             {
-                return BadRequest($"DB error: {dbException.Message}" + Environment.NewLine +
-                                  $"{dbException.InnerException?.Message}");
+                response.Message = $"DB error: {dbException.Message}" + Environment.NewLine +
+                                        $"{dbException.InnerException?.Message}";
+                return BadRequest(response);
             }
 
             if (exception is ArgumentException apiException)
             {
-                return BadRequest(apiException.Message);
+                response.Message = apiException.Message;
+                return BadRequest(response);
             }
 
-            return BadRequest($"Something went wrong: {exception.Message}" + Environment.NewLine +
-                              $"{exception.InnerException?.Message}");
+            response.Message = $"Something went wrong: {exception.Message}" + Environment.NewLine +
+                                    $"{exception.InnerException?.Message}";
+            return BadRequest(response);
         }
     }
 }

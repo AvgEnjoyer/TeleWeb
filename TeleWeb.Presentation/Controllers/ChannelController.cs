@@ -14,15 +14,16 @@ namespace TeleWeb.Presentation.Controllers;
 public class ChannelController : ControllerBase
 {
     private readonly IChannelService _channelService;
-    private readonly IValidator<GetChannelDTO> _channelValidator;
+    private readonly IPostService _postService;
 
-    public ChannelController(IChannelService channelService, IValidator<GetChannelDTO> channelValidator)
+    public ChannelController(IChannelService channelService,
+        IPostService postService)
     {
         _channelService = channelService;
-        _channelValidator = channelValidator;
+        _postService = postService;
     }
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<GetChannelDTO>>> GetAllChannels()//TODO
+    public async Task<ActionResult> GetAllChannels()//TODO
     {
         try
         {
@@ -36,12 +37,31 @@ public class ChannelController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<IEnumerable<GetChannelDTO>>> GetChannelById(Guid id) //TODO
+    public async Task<ActionResult> GetChannelById(Guid id) //TODO
     {
         try
         {
             var channelDTO = await _channelService.GetByIdAsync(id);
             return Ok(channelDTO);
+        }
+        catch (Exception exception)
+        {
+            return ExceptionResult(exception);
+        }
+    }
+    [HttpGet("{channelId}/isAdmin")]
+    public async Task<ActionResult> isAdmin(Guid channelId) //TODO
+    {
+        try
+        {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _channelService.IsAdminAsync(channelId, userId);
+            var response = new ApiResponse()
+            {
+                Success = true,
+                Message = "User is admin"
+            };
+            return Ok(response);
         }
         catch (Exception exception)
         {
@@ -58,8 +78,14 @@ public class ChannelController : ControllerBase
         try
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _channelService.CreateAsync(channelDTO, userId);
-            return Ok();
+            var getChannelDTO = await _channelService.CreateAsync(channelDTO, userId);
+            var response = new ApiResponse<GetChannelDTO>()
+            {
+                Success = true,
+                Data = getChannelDTO,
+                Message = "Channel created successfully"
+            };
+            return Ok(response);
         }
         catch (Exception exception)
         {
@@ -76,8 +102,14 @@ public class ChannelController : ControllerBase
         try
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _channelService.CreatePostAsync(postDTO, channelId, userId);
-            return Ok();
+            var getPostDTO = await _postService.CreatePostAsync(postDTO, channelId, userId);
+            var response = new ApiResponse<GetPostDTO>()
+            {
+                Success = true,
+                Data = getPostDTO,
+                Message = "Post created successfully"
+            };
+            return Ok(response);
         }
         catch (Exception exception)
         {
@@ -94,7 +126,7 @@ public class ChannelController : ControllerBase
         try
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _channelService.DeletePostAsync(postId, userId);
+            await _postService.DeletePostAsync(postId, userId);
             return Ok();
         }
         catch (Exception exception)
