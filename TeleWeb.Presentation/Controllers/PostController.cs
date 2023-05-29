@@ -29,8 +29,14 @@ public class PostController : ControllerBase
         try
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _postService.CreatePostAsync(postDTO, channelId, userId);
-            return Ok();
+            var getPostDTO = await _postService.CreatePostAsync(postDTO, channelId, userId);
+            var response = new ApiResponse<GetPostDTO>()
+            {
+                Success = true,
+                Message = "Post created successfully",
+                Data = getPostDTO
+            };
+            return Ok(response);
         }
         catch (Exception exception)
         {
@@ -39,7 +45,7 @@ public class PostController : ControllerBase
     }
     [HttpPut("/api/Post/{postId}")]
     [Authorize(Roles = "AuthorizedUser")]
-    public async Task<ActionResult> UpdatePost( [FromBody]UpdatePostDTO postDTO, Guid postId)
+    public async Task<ActionResult> UpdatePost( [FromBody]UpdatePostDTO postDTO, Guid postId)//TODO:
     {
         
         try
@@ -56,7 +62,7 @@ public class PostController : ControllerBase
     
     [HttpDelete("/api/Post/{postId}")]
     [Authorize(Roles = "AuthorizedUser")]
-    public async Task<ActionResult> DeletePost( Guid postId)
+    public async Task<ActionResult> DeletePost( Guid postId)//TODO:
     {
         /*var validationResult = await _channelValidator.ValidateAsync(channelDTO);
         if(!validationResult.IsValid)
@@ -73,12 +79,16 @@ public class PostController : ControllerBase
         }
     }
     [HttpGet("{channelId}/post/")]
-    public async Task<ActionResult<IEnumerable<GetPostDTO>>> GetPostsByChannel(Guid channnelId)
+    public async Task<ActionResult> GetPostsByChannel(Guid channelId)
     {
         try
         {
-            //var postDTO = await _postService.GetPostsByChannelAsync(channnelId);
-            return Ok();
+            var postDTOs = await _postService.GetPostsByChannelAsync(channelId);
+            var response = new ApiResponse<IEnumerable<GetPostDTO>>()
+            {
+                Data = postDTOs
+            };
+            return Ok(response);
         }
         catch (Exception exception)
         {

@@ -25,6 +25,8 @@ namespace TeleWeb.Presentation.AppStartExtensions
 
             CreateMap<UpdatePostDTO, Post>()
                 .ForMember(dest => dest.MediaFiles, opt => opt.MapFrom(src => src.MediaFileDTOs));
+            CreateMap<Post, GetPostDTO>()
+                .ForMember(dest => dest.MediaFileDTOs, opt => opt.MapFrom(src => src.MediaFiles));
 
             
             // DTO of Channel

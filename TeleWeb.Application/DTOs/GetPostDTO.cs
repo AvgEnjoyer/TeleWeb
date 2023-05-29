@@ -13,6 +13,6 @@ namespace TeleWeb.Application.DTOs
         public int likes { get; set; }
         public int dislikes { get; set; }
         
-        public  Collection<MediaFileDTO> MediaFilesDTOs { get; set; }
+        public IEnumerable<MediaFileDTO> MediaFileDTOs { get; set; }
     }
 }

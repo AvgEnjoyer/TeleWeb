@@ -42,7 +42,12 @@ public class ChannelController : ControllerBase
         try
         {
             var channelDTO = await _channelService.GetByIdAsync(id);
-            return Ok(channelDTO);
+            var response = new ApiResponse<GetChannelDTO>()
+            {
+                Success = true,
+                Data = channelDTO
+            };
+            return Ok(response);
         }
         catch (Exception exception)
         {
